@@ -81,9 +81,12 @@ export async function getManagedSiteContent<T>(key: string, fallback: T): Promis
         .limit(1)
       if (row) return normalizeSiteContent(key, row.content) as T
     } catch (error) {
-      console.error(`[admin-data] Could not read site content "${key}" from database; falling back to local content.`, error)
+      console.error(`[admin-data] Could not read site content "${key}" from database; falling back to defaults.`, error)
+      if (process.env.NODE_ENV === 'production') return normalizeSiteContent(key, fallback) as T
     }
   }
+
+  if (process.env.NODE_ENV === 'production') return normalizeSiteContent(key, fallback) as T
 
   const store = await readAdminStore()
   const content = store.siteContent[key] as T | undefined
@@ -174,9 +177,12 @@ export async function getManagedTrips(): Promise<TravelTrip[]> {
         hotels: hotelsByTrip.get(row.slug) ?? [],
       } as TravelTrip))
     } catch (error) {
-      console.error('[admin-data] Could not read trips from database; falling back to local store.', error)
+      console.error('[admin-data] Could not read trips from database; falling back to default trips.', error)
+      if (process.env.NODE_ENV === 'production') return fallbackTrips
     }
   }
+
+  if (process.env.NODE_ENV === 'production') return fallbackTrips
 
   const store = await readAdminStore()
   const merged = new Map<string, TravelTrip>()
