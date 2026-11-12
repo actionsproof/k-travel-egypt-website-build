@@ -9,7 +9,7 @@ type Language = 'ar' | 'en'
 const navigation = {
   en: {
     trips: 'Trips',
-    why: 'Why K Travel',
+    why: 'Why K Egypt Travel',
     branches: 'Our branches',
     hotels: 'Hotels',
     visas: 'Visa guide',
@@ -21,7 +21,7 @@ const navigation = {
   },
   ar: {
     trips: 'الرحلات',
-    why: 'لماذا كي ترافل',
+    why: 'لماذا كي إيجيبت ترافل',
     branches: 'فروعنا',
     hotels: 'الفنادق',
     visas: 'التأشيرات',
@@ -41,9 +41,9 @@ export function SiteHeader({ lang, onLanguageChange }: { lang: Language; onLangu
 
   return (
     <header className="site-header">
-      <Link href={`${home}#home`} className="brand" aria-label="K Travel Egypt home" onClick={closeMenu}>
+      <Link href={`${home}#home`} className="brand" aria-label="K Egypt Travel home" onClick={closeMenu}>
         <span className="brand-mark"><Plane size={22} strokeWidth={2.2} /></span>
-        <span className="brand-words"><strong>K TRAVEL</strong><small>EGYPT</small></span>
+        <span className="brand-words"><strong>K EGYPT</strong><small>TRAVEL</small></span>
       </Link>
       <nav id="site-navigation" className={`main-nav ${menuOpen ? 'is-open' : ''}`} aria-label={lang === 'ar' ? 'التنقل الرئيسي' : 'Main navigation'}>
         <Link href={`/trips?lang=${lang}`} onClick={closeMenu}>{labels.trips}</Link>

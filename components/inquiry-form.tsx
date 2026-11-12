@@ -27,7 +27,7 @@ export function InquiryForm({ lang, initialTrip, trips: tripData }: { lang: Lang
     const childAges = String(formData.get('childAges') ?? '')
     const lines = isArabic
       ? [
-          'مرحباً كي ترافل، أريد الاستفسار عن رحلة.',
+          'مرحباً كي إيجيبت ترافل، أريد الاستفسار عن رحلة.',
           `الاسم: ${formData.get('name')}`,
           `الهاتف: ${formData.get('phone')}`,
           `الرحلة: ${tripName || 'غير محددة'}`,
@@ -38,7 +38,7 @@ export function InquiryForm({ lang, initialTrip, trips: tripData }: { lang: Lang
           `ملاحظات: ${formData.get('notes') || 'لا يوجد'}`,
         ]
       : [
-          'Hello K Travel Egypt, I’d like to ask about a trip.',
+          'Hello K Egypt Travel, I’d like to ask about a trip.',
           `Name: ${formData.get('name')}`,
           `Phone: ${formData.get('phone')}`,
           `Trip: ${tripName || 'Not selected'}`,
@@ -106,7 +106,7 @@ export function InquiryForm({ lang, initialTrip, trips: tripData }: { lang: Lang
           <label className="form-full">{isArabic ? 'ملاحظات إضافية' : 'Anything else?'}<textarea name="notes" rows={4} maxLength={1200} placeholder={isArabic ? 'أخبرنا بما يساعدنا في ترتيب رحلتك' : 'Tell us what would help us plan your trip'} /></label>
         </div>
         <div className="sr-only" aria-hidden="true"><label htmlFor="inquiry-website">Website</label><input id="inquiry-website" name="website" tabIndex={-1} autoComplete="off" /></div>
-        <div className="form-notice"><ShieldCheck size={17} /><p>{isArabic ? 'سيتم حفظ بيانات طلبك للمتابعة من فريق كي ترافل. الأسعار والتأكيدات النهائية على واتساب.' : 'Your request is saved for the K Travel team to follow up. Quotes and final confirmations are handled on WhatsApp.'}</p></div>
+        <div className="form-notice"><ShieldCheck size={17} /><p>{isArabic ? 'سيتم حفظ بيانات طلبك للمتابعة من فريق كي إيجيبت ترافل. الأسعار والتأكيدات النهائية على واتساب.' : 'Your request is saved for the K Egypt Travel team to follow up. Quotes and final confirmations are handled on WhatsApp.'}</p></div>
         <button className="detail-quote-button" type="submit" disabled={isSubmitting}>{isSubmitting ? (isArabic ? 'جارٍ الإرسال…' : 'Sending…') : (isArabic ? 'إرسال الطلب وفتح واتساب' : 'Send inquiry & open WhatsApp')}<MessageCircle size={17} /></button>
         {status === 'success' && <p className="form-success" role="status">{isArabic ? 'تم حفظ طلبك. أرسل رسالة واتساب المفتوحة لإتمام التواصل.' : 'Your request has been saved. Send the WhatsApp message to complete the conversation.'}</p>}
         {status === 'error' && <p className="form-error" role="alert">{isArabic ? 'لم نتمكن من حفظ الطلب، لكن يمكنك إرسال الرسالة مباشرة على واتساب.' : 'We couldn’t save your request, but you can send the message directly on WhatsApp.'} {whatsAppUrl && <a href={whatsAppUrl} target="_blank" rel="noreferrer">{isArabic ? 'فتح واتساب' : 'Open WhatsApp'}</a>}</p>}

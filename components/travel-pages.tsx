@@ -12,7 +12,7 @@ import { SiteHeader } from '@/components/site-header'
 type Lang = 'ar' | 'en'
 const tx = (value: Localized, lang: Lang) => value[lang]
 const waHref = (message: string, phone = whatsappContacts[0].number) => `https://wa.me/${phone}?text=${encodeURIComponent(message)}`
-const quoteText = (title: string, lang: Lang) => lang === 'ar' ? `مرحباً كي ترافل، من فضلكم أرسلوا تفاصيل وأسعار: ${title}` : `Hello K Travel Egypt, please send the latest details and a quote for: ${title}`
+const quoteText = (title: string, lang: Lang) => lang === 'ar' ? `مرحباً كي إيجيبت ترافل، من فضلكم أرسلوا تفاصيل وأسعار: ${title}` : `Hello K Egypt Travel, please send the latest details and a quote for: ${title}`
 const categoryText = (id: string, lang: Lang) => categories.find((category) => category.id === id)?.title[lang] ?? (lang === 'ar' ? 'رحلة' : 'Trip')
 const galleryByCategory: Record<TravelTrip['category'], string[]> = {
   umrah: ['https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=1000&q=85', 'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=1000&q=85'],
@@ -36,7 +36,7 @@ export function SiteFrame({ lang, children, homeStyle = false }: { lang: Lang; c
     <SiteHeader lang={lang} onLanguageChange={changeLanguage} />
     {children}
     <SiteFooter lang={lang} />
-    <a className={homeStyle ? 'floating-whatsapp' : 'pages-floating-wa'} href={waHref(quoteText(isArabic ? 'رحلتي القادمة' : 'my next trip', lang))} target="_blank" rel="noreferrer" aria-label={isArabic ? 'راسلنا على واتساب' : 'Message K Travel on WhatsApp'}><MessageCircle size={21} /><span>{isArabic ? 'واتساب' : 'WhatsApp'}</span></a>
+    <a className={homeStyle ? 'floating-whatsapp' : 'pages-floating-wa'} href={waHref(quoteText(isArabic ? 'رحلتي القادمة' : 'my next trip', lang))} target="_blank" rel="noreferrer" aria-label={isArabic ? 'راسلنا على واتساب' : 'Message K Egypt Travel on WhatsApp'}><MessageCircle size={21} /><span>{isArabic ? 'واتساب' : 'WhatsApp'}</span></a>
   </div>
 }
 
@@ -144,9 +144,9 @@ export function InquiryForm({ lang, initialTrip }: { lang: Lang; initialTrip?: s
     const formData = new FormData(event.currentTarget)
     const values = Object.fromEntries(formData.entries())
     const lines = isArabic ? [
-      'مرحباً كي ترافل، أريد الاستفسار عن رحلة.', `الاسم: ${values.name}`, `الهاتف: ${values.phone}`, `الرحلة: ${selected ? tx(selected.title, lang) : values.trip || 'غير محددة'}`, `الفندق: ${values.hotel || 'لا يوجد اختيار'}`, `الكبار: ${values.adults}`, `الأطفال والأعمار: ${values.children || 'لا يوجد'}`, `التاريخ المفضل: ${values.date || 'مرن'}`, `ملاحظات: ${values.notes || 'لا يوجد'}`
+      'مرحباً كي إيجيبت ترافل، أريد الاستفسار عن رحلة.', `الاسم: ${values.name}`, `الهاتف: ${values.phone}`, `الرحلة: ${selected ? tx(selected.title, lang) : values.trip || 'غير محددة'}`, `الفندق: ${values.hotel || 'لا يوجد اختيار'}`, `الكبار: ${values.adults}`, `الأطفال والأعمار: ${values.children || 'لا يوجد'}`, `التاريخ المفضل: ${values.date || 'مرن'}`, `ملاحظات: ${values.notes || 'لا يوجد'}`
     ] : [
-      'Hello K Travel Egypt, I’d like to ask about a trip.', `Name: ${values.name}`, `Phone: ${values.phone}`, `Trip: ${selected ? tx(selected.title, lang) : values.trip || 'Not selected'}`, `Hotel: ${values.hotel || 'No preference'}`, `Adults: ${values.adults}`, `Children and ages: ${values.children || 'None'}`, `Preferred date: ${values.date || 'Flexible'}`, `Notes: ${values.notes || 'None'}`
+      'Hello K Egypt Travel, I’d like to ask about a trip.', `Name: ${values.name}`, `Phone: ${values.phone}`, `Trip: ${selected ? tx(selected.title, lang) : values.trip || 'Not selected'}`, `Hotel: ${values.hotel || 'No preference'}`, `Adults: ${values.adults}`, `Children and ages: ${values.children || 'None'}`, `Preferred date: ${values.date || 'Flexible'}`, `Notes: ${values.notes || 'None'}`
     ]
     window.open(waHref(lines.join('\n')), '_blank', 'noopener,noreferrer')
     setSent(true)

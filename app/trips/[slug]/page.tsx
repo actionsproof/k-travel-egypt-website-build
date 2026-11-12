@@ -9,8 +9,8 @@ export const dynamic = 'force-dynamic'
 export async function generateMetadata({ params }: Pick<PageProps, 'params'>) {
   const { slug } = await params
   const trip = await getTravelTrip(slug)
-  if (!trip) return { title: 'Trip not found | K Travel Egypt' }
-  return { title: `${trip.title.en} | K Travel Egypt`, description: trip.summary.en }
+  if (!trip) return { title: 'Trip not found | K Egypt Travel' }
+  return { title: `${trip.title.en} | K Egypt Travel`, description: trip.summary.en }
 }
 
 export default async function TripPage({ params, searchParams }: PageProps) {

@@ -6,8 +6,8 @@ import { getTravelSiteContent } from '@/lib/travel-store'
 type PageProps = { searchParams: Promise<{ lang?: string }> }
 
 export const metadata: Metadata = {
-  title: 'FAQs | K Travel Egypt',
-  description: 'Answers to common K Travel Egypt questions about trip quotes, hotel options, children, visas, branches and booking terms.',
+  title: 'FAQs | K Egypt Travel',
+  description: 'Answers to common K Egypt Travel questions about trip quotes, hotel options, children, visas, branches and booking terms.',
 }
 
 export const dynamic = 'force-dynamic'

@@ -50,7 +50,7 @@ try {
 
   const siteContent = {
     company: {
-      name: 'K Travel Egypt',
+      name: 'K Egypt Travel',
       tagline: { ar: 'رحلتك في رعايتنا', en: 'Your Journey, Our Care' },
       licenseCategory: 'A',
       licenseNumber: '2469',

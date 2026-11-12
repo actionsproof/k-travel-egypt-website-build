@@ -7,25 +7,20 @@ import './travel-pages.css'
 const tajawal = Tajawal({ subsets: ['arabic', 'latin'], weight: ['400', '500', '700', '800'], variable: '--font-tajawal', display: 'swap' })
 
 export const metadata: Metadata = {
-  title: 'K Travel Egypt | Your Journey, Our Care',
-  description: 'Discover thoughtfully planned Umrah, honeymoon, international and Egypt trips with K Travel Egypt. Ask our licensed travel team for the latest details on WhatsApp.',
-  generator: 'K Travel Egypt',
+  title: 'K Egypt Travel | Your Journey, Our Care',
+  description: 'Discover thoughtfully planned Umrah, honeymoon, international and Egypt trips with K Egypt Travel. Ask our licensed travel team for the latest details on WhatsApp.',
+  generator: 'K Egypt Travel',
   icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-icon.png',
+    icon: [{
+      url: '/k-travel-icon.svg',
+      type: 'image/svg+xml',
+    }, {
+      url: '/k-travel-icon-32x32.png',
+      sizes: '32x32',
+      type: 'image/png',
+    }],
+    shortcut: '/favicon.ico',
+    apple: '/k-travel-apple-icon.png',
   },
 }
 

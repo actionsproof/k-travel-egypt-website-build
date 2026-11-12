@@ -23,7 +23,7 @@ export default async function AdminPage() {
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, marginBottom: 28, flexWrap: 'wrap' }}>
         <div>
           <p style={{ margin: 0, color: '#4b5563', fontSize: 14, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Admin</p>
-          <h1 style={{ margin: '8px 0 0', fontSize: 36 }}>K Travel Egypt dashboard</h1>
+          <h1 style={{ margin: '8px 0 0', fontSize: 36 }}>K Egypt Travel dashboard</h1>
         </div>
         <form action="/api/admin/logout" method="POST">
           <button type="submit" style={{ padding: '12px 18px', borderRadius: 12, border: '1px solid #d1d5db', background: '#111827', color: '#fff', cursor: 'pointer', fontWeight: 700 }}>
