@@ -15,9 +15,6 @@
 .travel-pages button, .travel-pages input, .travel-pages select, .travel-pages textarea { font: inherit; }
 .travel-pages button:focus-visible, .travel-pages a:focus-visible, .travel-pages input:focus-visible, .travel-pages select:focus-visible, .travel-pages textarea:focus-visible { outline: 3px solid #f6ae79; outline-offset: 3px; }
 .travel-pages.home-frame { background: #fff; color: #14223d; }
-.travel-pages.home-frame .brand { color: #1e3a8a; }
-.travel-pages.home-frame .main-nav > a { color: #435067; }
-.travel-pages.home-frame .main-nav > a:hover { color: #f97316; }
 .travel-pages.home-frame .catalog-page { background: #fff; }
 .travel-pages.home-frame .trips-page-heading { padding-top: 68px; padding-bottom: 15px; }
 .travel-pages.home-frame .trips-page-heading h1 { margin: 12px 0 8px; color: #14223d; font-size: clamp(28px, 3.4vw, 40px); font-weight: 800; letter-spacing: -.025em; line-height: 1.25; }
@@ -45,21 +42,8 @@
 .travel-pages.home-frame .catalog-detail { color: #1e3a8a !important; }
 .travel-pages.home-frame .catalog-wa-link { color: #e9670c !important; }
 .travel-pages.home-frame .empty-results { border: 1px dashed #dce2ec; border-radius: 14px; }
-.pages-topline { min-height: 33px; padding: 7px 24px; display: flex; justify-content: center; align-items: center; gap: 9px; background: var(--travel-ink); color: #f4f7f8; font-size: 12px; letter-spacing: .015em; text-align: center; }
-.top-note-dot { width: 7px; height: 7px; flex: 0 0 auto; border-radius: 50%; background: #90d0c9; }
-.pages-header { width: min(1320px, calc(100% - 48px)); min-height: 80px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 24px; border-bottom: 1px solid var(--travel-line); }
-.pages-brand { display: inline-flex; align-items: center; gap: 10px; flex: 0 0 auto; }
-.pages-brand > span:last-child { display: grid; gap: 1px; line-height: 1; }
-.pages-brand strong { font-family: Arial, sans-serif; font-size: 17px; letter-spacing: .08em; font-weight: 800; }
-.pages-brand small { font: 700 9px/1.3 Arial, sans-serif; letter-spacing: .28em; color: var(--travel-orange); }
-.travel-pages:not(.home-frame) .brand-mark { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 13px; color: white; background: var(--travel-orange); transform: rotate(-6deg); }
-.pages-nav { display: flex; align-items: center; justify-content: center; gap: clamp(13px, 2.2vw, 30px); font-size: 14px; font-weight: 600; }
-.pages-nav a { color: #40546d; transition: color .2s ease; }
-.pages-nav a:hover, .footer-links a:hover { color: var(--travel-orange); }
-.pages-head-actions { display: flex; align-items: center; gap: 10px; flex: 0 0 auto; }
-.pages-lang { display: inline-flex; align-items: center; gap: 5px; border: 1px solid var(--travel-line); border-radius: 999px; padding: 9px 12px; background: white; font-size: 13px; font-weight: 700; }
-.pages-ask, .detail-quote-button { display: inline-flex; justify-content: center; align-items: center; gap: 9px; min-height: 43px; padding: 0 17px; border: 0; border-radius: 999px; background: var(--travel-orange); color: white !important; font-size: 14px; font-weight: 700; transition: transform .2s ease, background .2s ease; }
-.pages-ask:hover, .detail-quote-button:hover { background: #dc632b; transform: translateY(-1px); }
+.detail-quote-button { display: inline-flex; justify-content: center; align-items: center; gap: 9px; min-height: 43px; padding: 0 17px; border: 0; border-radius: 999px; background: var(--travel-orange); color: white !important; font-size: 14px; font-weight: 700; transition: transform .2s ease, background .2s ease; }
+.detail-quote-button:hover { background: #dc632b; transform: translateY(-1px); }
 .inner-hero { position: relative; overflow: hidden; min-height: 246px; padding: 56px max(24px, calc((100% - 1200px) / 2)); display: flex; align-items: center; justify-content: space-between; gap: 36px; background: #e8f2f1; }
 .inner-hero::after { content: ''; position: absolute; inset-inline-end: -90px; top: -210px; width: 520px; height: 520px; border: 1px solid rgba(21,45,74,.09); border-radius: 50%; box-shadow: 0 0 0 45px rgba(21,45,74,.025), 0 0 0 90px rgba(21,45,74,.02); }
 .inner-hero-copy { position: relative; z-index: 1; width: min(750px, 100%); }
@@ -218,25 +202,12 @@
 .page-breadcrumb { display: flex; gap: 8px; padding: 16px max(24px, calc((100% - 1200px) / 2)); color: var(--travel-muted); font-size: 12px; }
 
 @media (max-width: 1000px) {
-  .pages-header { width: calc(100% - 32px); gap: 13px; }
-  .pages-nav { gap: 13px; font-size: 12px; }
-  .pages-ask { padding: 0 12px; font-size: 12px; }
   .catalog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .hotel-directory-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .detail-layout { grid-template-columns: minmax(0, 1fr) 260px; gap: 25px; }
   .contact-phones { flex-wrap: wrap; }
 }
 @media (max-width: 740px) {
-  .pages-topline { min-height: 30px; padding-inline: 12px; font-size: 10px; }
-  .pages-header { min-height: 67px; width: calc(100% - 28px); flex-wrap: wrap; gap: 12px; }
-  .pages-brand strong { font-size: 15px; }
-  .brand-mark { width: 34px; height: 34px; }
-  .pages-nav { order: 3; width: 100%; justify-content: flex-start; overflow-x: auto; padding: 0 0 12px; gap: 18px; scrollbar-width: none; white-space: nowrap; }
-  .pages-nav::-webkit-scrollbar { display: none; }
-  .pages-nav a { font-size: 12px; }
-  .pages-head-actions { margin-inline-start: auto; }
-  .pages-lang { min-height: 36px; padding: 7px 10px; font-size: 12px; }
-  .pages-ask { min-height: 36px; }
   .inner-hero { min-height: 225px; padding: 38px 22px; }
   .inner-hero h1 { font-size: clamp(34px, 10vw, 46px); }
   .inner-hero p { font-size: 15px; }
@@ -285,7 +256,6 @@
   .pages-floating-wa { inset-inline-end: 14px; bottom: 14px; min-height: 43px; padding-inline: 14px; }
 }
 @media (max-width: 420px) {
-  .pages-ask { gap: 5px; padding-inline: 9px; font-size: 11px; }
   .catalog-card-bottom { flex-wrap: wrap; }
   .contact-phones { grid-template-columns: 1fr; }
   .contact-phones > div { grid-column: auto; }
