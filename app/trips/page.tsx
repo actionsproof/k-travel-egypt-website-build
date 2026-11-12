@@ -9,5 +9,5 @@ export default async function TripsPage({ searchParams }: PageProps) {
   const { lang: requestedLang } = await searchParams
   const lang = requestedLang === 'en' ? 'en' : 'ar'
   const trips = await getTravelTrips()
-  return <SiteFrame lang={lang}><TripCatalog lang={lang} tripData={trips} /></SiteFrame>
+  return <SiteFrame lang={lang} homeStyle><TripCatalog lang={lang} tripData={trips} /></SiteFrame>
 }

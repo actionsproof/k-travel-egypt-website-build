@@ -4,8 +4,9 @@ import { useMemo, useState, type FormEvent, type ReactNode } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ArrowLeft, ArrowRight, ArrowUpRight, CalendarDays, Check, ChevronDown, Clock3, MapPin, MessageCircle, Plane, Search, ShieldCheck, Star } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ArrowUpRight, CalendarDays, Check, ChevronDown, Clock3, MapPin, Menu, MessageCircle, Plane, Search, ShieldCheck, Star, X } from 'lucide-react'
 import { branches, categories, faqs, generalTerms, mealPlanLabel, mealPlans, trips, visaGuides, whatsappContacts, type Localized, type TravelTrip } from '@/lib/travel-data'
+import { SiteFooter } from '@/components/site-footer'
 
 type Lang = 'ar' | 'en'
 const tx = (value: Localized, lang: Lang) => value[lang]
@@ -19,25 +20,47 @@ const galleryByCategory: Record<TravelTrip['category'], string[]> = {
   domestic: ['https://images.unsplash.com/photo-1539768942893-daf53e448371?auto=format&fit=crop&w=1000&q=85', 'https://images.unsplash.com/photo-1530789253388-582c481c54b0?auto=format&fit=crop&w=1000&q=85'],
 }
 
-export function SiteFrame({ lang, children }: { lang: Lang; children: ReactNode }) {
+export function SiteFrame({ lang, children, homeStyle = false }: { lang: Lang; children: ReactNode; homeStyle?: boolean }) {
   const isArabic = lang === 'ar'
   const pathname = usePathname()
+  const [menuOpen, setMenuOpen] = useState(false)
   const labels = isArabic
-    ? { home: 'الرئيسية', trips: 'الرحلات', hotels: 'الفنادق', visas: 'التأشيرات', faqs: 'الأسئلة الشائعة', terms: 'الشروط', contact: 'تواصل معنا', ask: 'خطط لرحلتك', switch: 'EN', footer: 'رحلتك في رعايتنا', hours: 'كل يوم من ١٠ صباحاً إلى ١٠ مساءً', notice: 'الأسعار تتغير حسب سعر الصرف والموسم؛ أرسل أحدث التفاصيل على واتساب.' }
-    : { home: 'Home', trips: 'Trips', hotels: 'Hotels', visas: 'Visa guide', faqs: 'FAQs', terms: 'Travel terms', contact: 'Contact', ask: 'Plan your trip', switch: 'عربي', footer: 'Your Journey, Our Care', hours: 'Daily, 10 AM–10 PM', notice: 'Prices change with the exchange rate and season; ask us for the latest details on WhatsApp.' }
+    ? { home: 'الرئيسية', trips: 'الرحلات', why: 'لماذا كي ترافل', branches: 'فروعنا', hotels: 'الفنادق', visas: 'التأشيرات', faqs: 'الأسئلة الشائعة', terms: 'الشروط', contact: 'تواصل معنا', ask: 'خطط لرحلتك', switch: 'EN', footer: 'رحلتك في رعايتنا', hours: 'كل يوم من ١٠ صباحاً إلى ١٠ مساءً', notice: 'الأسعار تتغير حسب سعر الصرف والموسم؛ أرسل أحدث التفاصيل على واتساب.' }
+    : { home: 'Home', trips: 'Trips', why: 'Why K Travel', branches: 'Our branches', hotels: 'Hotels', visas: 'Visa guide', faqs: 'FAQs', terms: 'Travel terms', contact: 'Contact', ask: 'Plan your trip', switch: 'عربي', footer: 'Your Journey, Our Care', hours: 'Daily, 10 AM–10 PM', notice: 'Prices change with the exchange rate and season; ask us for the latest details on WhatsApp.' }
   const direction = isArabic ? 'rtl' : 'ltr'
-  return <div className="travel-pages" dir={direction} lang={lang}>
-    <div className="pages-topline"><span className="top-note-dot" />{isArabic ? 'شركة سياحة مرخصة · فئة أ · الإسكندرية والقاهرة ودمنهور' : 'Licensed tourism company · Category A · Alexandria, Cairo & Damanhour'}</div>
-    <header className="pages-header">
-      <Link href={`/?lang=${lang}`} className="pages-brand" aria-label="K Travel Egypt"><span className="brand-mark"><Plane size={21} /></span><span><strong>K TRAVEL</strong><small>EGYPT</small></span></Link>
-      <nav className="pages-nav" aria-label={isArabic ? 'التنقل الرئيسي' : 'Main navigation'}>
-        <Link href={`/?lang=${lang}`}>{labels.home}</Link><Link href={`/trips?lang=${lang}`}>{labels.trips}</Link><Link href={`/hotels?lang=${lang}`}>{labels.hotels}</Link><Link href={`/visas?lang=${lang}`}>{labels.visas}</Link><Link href={`/faqs?lang=${lang}`}>{labels.faqs}</Link><Link href={`/terms?lang=${lang}`}>{labels.terms}</Link><Link href={`/contact?lang=${lang}`}>{labels.contact}</Link>
-      </nav>
-      <div className="pages-head-actions"><Link className="pages-lang" href={`${pathname}?lang=${isArabic ? 'en' : 'ar'}`}  aria-label={isArabic ? 'Switch to English' : 'التبديل للعربية'}>{labels.switch}<ChevronDown size={14} /></Link><Link className="pages-ask" href={`/inquiry?lang=${lang}`}>{labels.ask}<ArrowUpRight size={15} /></Link></div>
-    </header>
+  return <div className={`travel-pages${homeStyle ? ' home-frame' : ''}`} dir={direction} lang={lang}>
+    {homeStyle ? <>
+      <div className="top-note"><span className="top-note-dot" />{isArabic ? 'شركة سياحة مرخصة · فئة أ · الإسكندرية والقاهرة ودمنهور' : 'Licensed tourism company · Category A · Alexandria, Cairo & Damanhour'}</div>
+      <header className="site-header">
+        <Link href={`/?lang=${lang}#home`} className="brand" aria-label="K Travel Egypt home"><span className="brand-mark"><Plane size={22} strokeWidth={2.2} /></span><span className="brand-words"><strong>K TRAVEL</strong><small>EGYPT</small></span></Link>
+        <nav className={`main-nav ${menuOpen ? 'is-open' : ''}`} aria-label={isArabic ? 'التنقل الرئيسي' : 'Main navigation'}>
+          <Link href={`/trips?lang=${lang}`} onClick={() => setMenuOpen(false)}>{labels.trips}</Link>
+          <Link href={`/?lang=${lang}#why`} onClick={() => setMenuOpen(false)}>{labels.why}</Link>
+          <Link href={`/?lang=${lang}#branches`} onClick={() => setMenuOpen(false)}>{labels.branches}</Link>
+          <Link href={`/hotels?lang=${lang}`} onClick={() => setMenuOpen(false)}>{labels.hotels}</Link>
+          <Link href={`/visas?lang=${lang}`} onClick={() => setMenuOpen(false)}>{labels.visas}</Link>
+          <Link href={`/faqs?lang=${lang}`} onClick={() => setMenuOpen(false)}>{labels.faqs}</Link>
+          <Link href={`/contact?lang=${lang}`} onClick={() => setMenuOpen(false)}>{labels.contact}</Link>
+          <Link className="nav-whatsapp" href={`/inquiry?lang=${lang}`} onClick={() => setMenuOpen(false)}><MessageCircle size={16} />{labels.ask}</Link>
+        </nav>
+        <div className="header-actions">
+          <Link className="language-toggle" href={`${pathname}?lang=${isArabic ? 'en' : 'ar'}`} aria-label={isArabic ? 'Switch to English' : 'التبديل للعربية'}>{labels.switch}<ChevronDown size={14} /></Link>
+          <button className="menu-toggle" aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X /> : <Menu />}</button>
+        </div>
+      </header>
+    </> : <>
+      <div className="pages-topline"><span className="top-note-dot" />{isArabic ? 'شركة سياحة مرخصة · فئة أ · الإسكندرية والقاهرة ودمنهور' : 'Licensed tourism company · Category A · Alexandria, Cairo & Damanhour'}</div>
+      <header className="pages-header">
+        <Link href={`/?lang=${lang}`} className="pages-brand" aria-label="K Travel Egypt"><span className="brand-mark"><Plane size={21} /></span><span><strong>K TRAVEL</strong><small>EGYPT</small></span></Link>
+        <nav className="pages-nav" aria-label={isArabic ? 'التنقل الرئيسي' : 'Main navigation'}>
+          <Link href={`/?lang=${lang}`}>{labels.home}</Link><Link href={`/trips?lang=${lang}`}>{labels.trips}</Link><Link href={`/hotels?lang=${lang}`}>{labels.hotels}</Link><Link href={`/visas?lang=${lang}`}>{labels.visas}</Link><Link href={`/faqs?lang=${lang}`}>{labels.faqs}</Link><Link href={`/terms?lang=${lang}`}>{labels.terms}</Link><Link href={`/contact?lang=${lang}`}>{labels.contact}</Link>
+        </nav>
+        <div className="pages-head-actions"><Link className="pages-lang" href={`${pathname}?lang=${isArabic ? 'en' : 'ar'}`} aria-label={isArabic ? 'Switch to English' : 'التبديل للعربية'}>{labels.switch}<ChevronDown size={14} /></Link><Link className="pages-ask" href={`/inquiry?lang=${lang}`}>{labels.ask}<ArrowUpRight size={15} /></Link></div>
+      </header>
+    </>}
     {children}
-    <footer className="pages-footer"><div className="pages-footer-inner"><div><Link href={`/?lang=${lang}`} className="pages-brand footer-brand"><span className="brand-mark"><Plane size={20} /></span><span><strong>K TRAVEL</strong><small>EGYPT</small></span></Link><p>{labels.footer} · {isArabic ? 'شركة سياحة فئة أ · ترخيص ٢٤٦٩ · بطاقة ضريبية ٤٤٥-٧٧٣-٥٢٣' : 'Tourism Category A · License 2469 · Tax card 445-773-523'}</p><p>{labels.hours}</p></div><div className="footer-links"><Link href={`/trips?lang=${lang}`}>{labels.trips}</Link><Link href={`/hotels?lang=${lang}`}>{labels.hotels}</Link><Link href={`/visas?lang=${lang}`}>{labels.visas}</Link><Link href={`/faqs?lang=${lang}`}>{labels.faqs}</Link><Link href={`/terms?lang=${lang}`}>{labels.terms}</Link><Link href={`/contact?lang=${lang}`}>{labels.contact}</Link></div><div className="footer-contact">{whatsappContacts.map((contact) => <a key={contact.number} href={waHref(quoteText(isArabic ? 'استفسار عام' : 'a general inquiry', lang), contact.number)} target="_blank" rel="noreferrer"><MessageCircle size={15} />{contact.display}<span>{tx(contact.label, lang)}</span></a>)}</div></div><div className="pages-footer-bottom"><span>© {new Date().getFullYear()} K Travel Egypt</span><span>{labels.notice}</span></div></footer>
-    <a className="pages-floating-wa" href={waHref(quoteText(isArabic ? 'رحلتي القادمة' : 'my next trip', lang))} target="_blank" rel="noreferrer" aria-label={isArabic ? 'راسلنا على واتساب' : 'Message K Travel on WhatsApp'}><MessageCircle size={21} /><span>{isArabic ? 'واتساب' : 'WhatsApp'}</span></a>
+    <SiteFooter lang={lang} />
+    <a className={homeStyle ? 'floating-whatsapp' : 'pages-floating-wa'} href={waHref(quoteText(isArabic ? 'رحلتي القادمة' : 'my next trip', lang))} target="_blank" rel="noreferrer" aria-label={isArabic ? 'راسلنا على واتساب' : 'Message K Travel on WhatsApp'}><MessageCircle size={21} /><span>{isArabic ? 'واتساب' : 'WhatsApp'}</span></a>
   </div>
 }
 
@@ -48,7 +71,7 @@ function CompassIcon() { return <MapPin size={32} strokeWidth={1.5} /> }
 
 function TripCard({ trip, lang }: { trip: TravelTrip; lang: Lang }) {
   const name = tx(trip.title, lang)
-  return <article className="catalog-card"><Link className="catalog-photo" href={`/trips/${trip.slug}?lang=${lang}`} aria-label={lang === 'ar' ? `تفاصيل ${name}` : `View ${name}`}><Image src={trip.image} alt={name} fill sizes="(max-width: 700px) 92vw, (max-width: 1100px) 44vw, 30vw" unoptimized /><span className="catalog-photo-shade" /><span className="catalog-tag">{tx(trip.tag, lang)}</span><span className="catalog-photo-arrow"><ArrowUpRight size={17} /></span></Link><div className="catalog-card-copy"><span className="catalog-destination"><MapPin size={13} />{tx(trip.destination, lang)}</span><h2><Link href={`/trips/${trip.slug}?lang=${lang}`}>{name}</Link></h2><p className="catalog-duration"><CalendarDays size={14} />{tx(trip.duration, lang)}</p>{trip.dates && <p className="catalog-dates"><Clock3 size={14} />{tx(trip.dates, lang)}</p>}<div className="catalog-card-bottom"><Link className="catalog-detail" href={`/trips/${trip.slug}?lang=${lang}`}>{lang === 'ar' ? 'عرض تفاصيل الرحلة' : 'View trip details'}<ArrowUpRight size={15} /></Link><a className="catalog-wa-link" href={waHref(quoteText(`${name} · ${tx(trip.duration, lang)}${trip.dates ? ` · ${tx(trip.dates, lang)}` : ''}`, lang))} target="_blank" rel="noreferrer">{lang === 'ar' ? 'اسأل عن السعر' : 'Ask for price'}<MessageCircle size={15} /></a></div></div></article>
+  return <article className="catalog-card"><Link className="catalog-photo" href={`/trips/${trip.slug}?lang=${lang}`} aria-label={lang === 'ar' ? `تفاصيل ${name}` : `View ${name}`}><Image src={trip.image} alt={name} fill sizes="(max-width: 700px) 92vw, (max-width: 1100px) 44vw, 30vw" unoptimized /><span className="catalog-photo-shade" /><span className="catalog-tag"><span className="tag-dot" />{tx(trip.tag, lang)}</span><span className="catalog-photo-arrow"><ArrowUpRight size={17} /></span></Link><div className="catalog-card-copy"><span className="catalog-destination"><MapPin size={13} />{tx(trip.destination, lang)}</span><h2><Link href={`/trips/${trip.slug}?lang=${lang}`}>{name}</Link></h2><p className="catalog-duration"><CalendarDays size={14} />{tx(trip.duration, lang)}</p>{trip.dates && <p className="catalog-dates"><Clock3 size={14} />{tx(trip.dates, lang)}</p>}<div className="catalog-card-bottom"><Link className="catalog-detail" href={`/trips/${trip.slug}?lang=${lang}`}>{lang === 'ar' ? 'عرض تفاصيل الرحلة' : 'View trip details'}<ArrowUpRight size={15} /></Link><a className="catalog-wa-link" href={waHref(quoteText(`${name} · ${tx(trip.duration, lang)}${trip.dates ? ` · ${tx(trip.dates, lang)}` : ''}`, lang))} target="_blank" rel="noreferrer">{lang === 'ar' ? 'اسأل عن السعر' : 'Ask for price'}<MessageCircle size={15} /></a></div></div></article>
 }
 
 export function TripCatalog({ lang, tripData = trips }: { lang: Lang; tripData?: TravelTrip[] }) {
@@ -63,14 +86,14 @@ export function TripCatalog({ lang, tripData = trips }: { lang: Lang; tripData?:
     const dates = `${trip.dates?.ar ?? ''} ${trip.dates?.en ?? ''}`.toLocaleLowerCase()
     return matchesCategory && matchesQuery && (!month || dates.includes(month.toLocaleLowerCase()))
   }), [tripData, category, query, month])
-  return <>
-    <PageIntro lang={lang} eyebrow={isArabic ? 'اختاروا رحلتكم' : 'Find your next journey'} title={isArabic ? 'رحلات تناسب الحكاية اللي في بالك' : 'Trips for the story you want to tell'} description={isArabic ? 'من العمرة وشهر العسل إلى الرحلات الدولية وإجازات مصر. تصفحوا التفاصيل، وكل الأسعار والتأكيدات على واتساب.' : 'From Umrah and honeymoons to international trips and Egypt escapes. Explore the details; quotes and availability are confirmed on WhatsApp.'} />
+  return <div className="catalog-page">
+    <section className="trips-page-heading section-shell"><div className="eyebrow"><span className="eyebrow-dash" />{isArabic ? 'اختاروا رحلتكم' : 'Find your next journey'}</div><h1>{isArabic ? 'رحلات تناسب الحكاية اللي في بالك' : 'Trips for the story you want to tell'}</h1><p>{isArabic ? 'من العمرة وشهر العسل إلى الرحلات الدولية وإجازات مصر. تصفحوا التفاصيل، وكل الأسعار والتأكيدات على واتساب.' : 'From Umrah and honeymoons to international trips and Egypt escapes. Explore the details; quotes and availability are confirmed on WhatsApp.'}</p></section>
     <main className="inner-content"><div className="catalog-filters"><label className="catalog-search"><span className="sr-only">{isArabic ? 'ابحث عن وجهة' : 'Search destinations'}</span><Search size={17} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={isArabic ? 'ابحث عن وجهة أو رحلة' : 'Search destinations or trips'} /></label><label className="catalog-month"><span className="sr-only">{isArabic ? 'تصفية حسب الشهر' : 'Filter by month'}</span><CalendarDays size={16} /><select value={month} onChange={(event) => setMonth(event.target.value)}><option value="">{isArabic ? 'كل المواعيد' : 'Any date'}</option>{['November', 'December', 'January', 'March', 'October'].map((value) => <option key={value} value={value}>{isArabic ? ({ November: 'نوفمبر', December: 'ديسمبر', January: 'يناير', March: 'مارس', October: 'أكتوبر' } as Record<string, string>)[value] : value}</option>)}</select></label></div>
       <div className="catalog-category-tabs" role="group" aria-label={isArabic ? 'تصنيف الرحلات' : 'Trip categories'}><button className={category === 'all' ? 'is-active' : ''} onClick={() => setCategory('all')}>{isArabic ? 'كل الرحلات' : 'All trips'}</button>{categories.map((item) => <button key={item.id} className={category === item.id ? 'is-active' : ''} onClick={() => setCategory(item.id)}>{tx(item.title, lang)}</button>)}</div>
       <p className="result-count">{isArabic ? `عرض ${filtered.length} رحلة` : `${filtered.length} trips found`}</p>
       {filtered.length ? <div className="catalog-grid">{filtered.map((trip) => <TripCard key={trip.slug} trip={trip} lang={lang} />)}</div> : <div className="empty-results"><Search size={24} /><p>{isArabic ? 'لا توجد رحلات مطابقة. جرّبوا تغيير البحث.' : 'No trips match your filters. Try another search.'}</p></div>}
     </main>
-  </>
+  </div>
 }
 
 function SectionList({ title, items, lang, ordered = false }: { title: string; items?: Localized[]; lang: Lang; ordered?: boolean }) {

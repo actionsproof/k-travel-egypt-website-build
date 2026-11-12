@@ -95,6 +95,8 @@ body { margin: 0; background: #fff; color: #14223d; font-family: var(--font-taja
 .trip-meta > span:first-child { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
 .trip-meta svg { color: #f97316; }
 .trip-category { border-radius: 5px; background: #f4f6fa; color: #65728a; padding: 4px 7px; font-size: 10px; }
+.trip-dates { display: flex; align-items: flex-start; gap: 6px; margin: 8px 0 0; color: #68758a; font-size: 10px; line-height: 1.55; }
+.trip-dates svg { flex: 0 0 auto; color: #f97316; }
 .trip-cta { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 15px; padding-top: 12px; border-top: 1px solid #edf0f4; color: #e9670c; text-decoration: none; font-size: 12px; font-weight: 750; }
 .trip-cta svg { background: #fff1e6; border-radius: 50%; box-sizing: content-box; padding: 7px; }
 .no-results { min-height: 180px; border: 1px dashed #dce2ec; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: #748096; }

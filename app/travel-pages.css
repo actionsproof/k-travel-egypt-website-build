@@ -14,6 +14,37 @@
 .travel-pages a { color: inherit; text-decoration: none; }
 .travel-pages button, .travel-pages input, .travel-pages select, .travel-pages textarea { font: inherit; }
 .travel-pages button:focus-visible, .travel-pages a:focus-visible, .travel-pages input:focus-visible, .travel-pages select:focus-visible, .travel-pages textarea:focus-visible { outline: 3px solid #f6ae79; outline-offset: 3px; }
+.travel-pages.home-frame { background: #fff; color: #14223d; }
+.travel-pages.home-frame .brand { color: #1e3a8a; }
+.travel-pages.home-frame .main-nav > a { color: #435067; }
+.travel-pages.home-frame .main-nav > a:hover { color: #f97316; }
+.travel-pages.home-frame .catalog-page { background: #fff; }
+.travel-pages.home-frame .trips-page-heading { padding-top: 68px; padding-bottom: 15px; }
+.travel-pages.home-frame .trips-page-heading h1 { margin: 12px 0 8px; color: #14223d; font-size: clamp(28px, 3.4vw, 40px); font-weight: 800; letter-spacing: -.025em; line-height: 1.25; }
+.travel-pages.home-frame .trips-page-heading p { max-width: 760px; margin: 0; color: #758197; font-size: 14px; line-height: 1.75; }
+.travel-pages.home-frame .inner-content { width: min(1160px, calc(100% - 48px)); padding: 20px 24px 80px; }
+.travel-pages.home-frame .catalog-filters { gap: 12px; padding: 19px; border: 1px solid #e8ebf0; border-radius: 14px; background: #fff; box-shadow: 0 8px 26px rgba(28,48,82,.06); }
+.travel-pages.home-frame .catalog-search, .travel-pages.home-frame .catalog-month { border-color: #e8ebf0; border-radius: 9px; }
+.travel-pages.home-frame .catalog-category-tabs button { border-color: #e7eaf0; color: #667287; }
+.travel-pages.home-frame .catalog-category-tabs button:hover { border-color: #f97316; color: #e9670c; }
+.travel-pages.home-frame .catalog-category-tabs button.is-active { border-color: #1e3a8a; background: #1e3a8a; color: #fff; }
+.travel-pages.home-frame .result-count { color: #758197; }
+.travel-pages.home-frame .catalog-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 17px; }
+.travel-pages.home-frame .catalog-card { border-color: #e9edf2; border-radius: 14px; }
+.travel-pages.home-frame .catalog-card:hover { box-shadow: 0 14px 35px rgba(28,48,82,.1); }
+.travel-pages.home-frame .catalog-photo { height: 180px; background: #e9edf3; }
+.travel-pages.home-frame .catalog-photo-shade { background: linear-gradient(0deg, rgba(12,25,46,.42), transparent 58%); }
+.travel-pages.home-frame .catalog-tag { top: 14px; inset-inline-start: 14px; display: flex; align-items: center; gap: 6px; padding: 7px 10px; border: 0; background: rgba(255,255,255,.94); font-size: 10px; }
+.travel-pages.home-frame .catalog-photo-arrow { inset-inline-end: 14px; bottom: 14px; width: 34px; height: 34px; }
+.travel-pages.home-frame .catalog-card-copy { padding: 15px; }
+.travel-pages.home-frame .catalog-destination { color: #8993a4; font-size: 10px; }
+.travel-pages.home-frame .catalog-destination svg, .travel-pages.home-frame .catalog-duration svg, .travel-pages.home-frame .catalog-dates svg { color: #f97316; }
+.travel-pages.home-frame .catalog-card h2 { margin: 5px 0 10px; color: #14223d; font-size: 18px; }
+.travel-pages.home-frame .catalog-duration, .travel-pages.home-frame .catalog-dates { gap: 6px; margin: 7px 0; color: #68758a; font-size: 11px; line-height: 1.55; }
+.travel-pages.home-frame .catalog-card-bottom { align-items: flex-start; flex-direction: column; gap: 9px; margin-top: 12px; padding-top: 12px; border-color: #edf0f4; }
+.travel-pages.home-frame .catalog-detail { color: #1e3a8a !important; }
+.travel-pages.home-frame .catalog-wa-link { color: #e9670c !important; }
+.travel-pages.home-frame .empty-results { border: 1px dashed #dce2ec; border-radius: 14px; }
 .pages-topline { min-height: 33px; padding: 7px 24px; display: flex; justify-content: center; align-items: center; gap: 9px; background: var(--travel-ink); color: #f4f7f8; font-size: 12px; letter-spacing: .015em; text-align: center; }
 .top-note-dot { width: 7px; height: 7px; flex: 0 0 auto; border-radius: 50%; background: #90d0c9; }
 .pages-header { width: min(1320px, calc(100% - 48px)); min-height: 80px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 24px; border-bottom: 1px solid var(--travel-line); }
@@ -21,7 +52,7 @@
 .pages-brand > span:last-child { display: grid; gap: 1px; line-height: 1; }
 .pages-brand strong { font-family: Arial, sans-serif; font-size: 17px; letter-spacing: .08em; font-weight: 800; }
 .pages-brand small { font: 700 9px/1.3 Arial, sans-serif; letter-spacing: .28em; color: var(--travel-orange); }
-.brand-mark { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 13px; color: white; background: var(--travel-orange); transform: rotate(-6deg); }
+.travel-pages:not(.home-frame) .brand-mark { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 13px; color: white; background: var(--travel-orange); transform: rotate(-6deg); }
 .pages-nav { display: flex; align-items: center; justify-content: center; gap: clamp(13px, 2.2vw, 30px); font-size: 14px; font-weight: 600; }
 .pages-nav a { color: #40546d; transition: color .2s ease; }
 .pages-nav a:hover, .footer-links a:hover { color: var(--travel-orange); }
@@ -268,6 +299,23 @@
 .faq-page-item summary::-webkit-details-marker { display: none; }
 .faq-page-item[open] summary svg { transform: rotate(90deg); }
 .faq-page-item p { max-width: 760px; padding: 0 4px 20px; color: #68727c; line-height: 1.85; }
+
+@media (max-width: 900px) {
+  .travel-pages.home-frame .catalog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .travel-pages.home-frame .trips-page-heading { padding-top: 40px; }
+  .travel-pages.home-frame .trips-page-heading h1 { font-size: 28px; }
+  .travel-pages.home-frame .inner-content { width: calc(100% - 32px); padding: 20px 0 56px; }
+  .travel-pages.home-frame .catalog-filters { padding: 14px; }
+  .travel-pages.home-frame .catalog-grid { gap: 10px; }
+  .travel-pages.home-frame .catalog-photo { height: 135px; }
+  .travel-pages.home-frame .catalog-card-copy { padding: 12px 10px 11px; }
+  .travel-pages.home-frame .catalog-card h2 { font-size: 14px; }
+  .travel-pages.home-frame .catalog-duration, .travel-pages.home-frame .catalog-dates { font-size: 10px; }
+  .travel-pages.home-frame .catalog-card-bottom { gap: 7px; }
+  .travel-pages.home-frame .catalog-detail, .travel-pages.home-frame .catalog-wa-link { font-size: 10px; }
+}
 .faq-contact { margin-top: 24px; }
 .featured-actions { display: flex; align-items: center; gap: 18px; }
 .carousel-controls { display: flex; gap: 8px; }
