@@ -144,6 +144,26 @@
 .hotel-directory-card h2 { margin: 4px 0 6px; font-size: 16px; line-height: 1.4; }
 .hotel-directory-card p { margin: 7px 0; color: var(--travel-muted); font-size: 12px; }
 .hotel-directory-card .catalog-wa-link { margin-inline-start: 14px; }
+.hotel-directory-section, .hotel-package-section, .visa-service-section, .visa-guide-section { margin-bottom: 36px; }
+.hotel-section-heading { margin-bottom: 16px; }
+.hotel-section-heading h2 { margin: 0 0 5px; color: var(--travel-ink); font-size: 24px; }
+.hotel-section-heading p { margin: 0; color: var(--travel-muted); font-size: 14px; line-height: 1.7; }
+.hotel-region-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.hotel-region-card { padding: 20px; border: 1px solid var(--travel-line); border-radius: 15px; background: white; }
+.hotel-region-card h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 14px; color: var(--travel-ink); font-size: 18px; }
+.hotel-region-card h3 svg { color: var(--travel-orange); }
+.hotel-region-card ul, .visa-country-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.hotel-region-card li, .visa-country-list li { padding: 6px 10px; border: 1px solid #e8ebf0; border-radius: 999px; background: #fbfcfd; color: #53647b; font-size: 12px; line-height: 1.5; }
+.hotel-package-section { padding-top: 28px; border-top: 1px solid var(--travel-line); }
+.visa-service-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.visa-service-card h2 { margin-bottom: 14px; }
+.visa-service-card .small-link { margin-top: 16px; }
+.visa-support-card { margin-top: 16px; padding: 22px 24px; border: 1px solid #dce9e7; border-radius: 17px; background: #f3f8f7; }
+.visa-support-card h2 { margin: 0 0 14px; color: var(--travel-ink); font-size: 20px; }
+.visa-support-card ul { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
+.visa-support-card li { display: flex; align-items: flex-start; gap: 8px; color: #53647b; font-size: 14px; line-height: 1.6; }
+.visa-support-card li svg { flex: 0 0 auto; margin-top: 3px; color: #387b78; }
+.visa-guide-section { padding-top: 28px; border-top: 1px solid var(--travel-line); }
 .info-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .info-card { padding: 24px; border: 1px solid var(--travel-line); border-radius: 17px; background: white; }
 .info-icon { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 13px; background: #e7f1ef; color: #387b78; }
@@ -204,6 +224,7 @@
 @media (max-width: 1000px) {
   .catalog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .hotel-directory-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .visa-support-card ul { grid-template-columns: 1fr; }
   .detail-layout { grid-template-columns: minmax(0, 1fr) 260px; gap: 25px; }
   .contact-phones { flex-wrap: wrap; }
 }
@@ -237,6 +258,7 @@
   .detail-section h2 { font-size: 21px; }
   .hotel-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .hotel-directory-grid { grid-template-columns: 1fr; }
+  .hotel-region-grid, .visa-service-grid { grid-template-columns: 1fr; }
   .info-grid { grid-template-columns: 1fr; }
   .info-caution { grid-column: auto; }
   .terms-content, .inquiry-layout { grid-template-columns: 1fr; gap: 16px; }

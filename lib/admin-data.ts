@@ -2,8 +2,9 @@ import { promises as fs } from 'node:fs'
 import path from 'node:path'
 import { asc, eq, inArray } from 'drizzle-orm'
 import { db, isDatabaseConfigured } from '@/lib/db'
-import { travelHotels, travelInquiries, travelTripMedia, travelTrips } from '@/lib/db/schema'
+import { travelHotels, travelInquiries, travelSiteContent, travelTripMedia, travelTrips } from '@/lib/db/schema'
 import { trips as fallbackTrips, type TravelTrip } from '@/lib/travel-data'
+import { normalizeSiteContent } from '@/lib/site-content'
 
 export type AdminInquiryStatus = 'new' | 'contacted' | 'closed'
 
@@ -25,6 +26,8 @@ export type AdminInquiry = {
 export type AdminStore = {
   trips: TravelTrip[]
   inquiries: AdminInquiry[]
+  siteContent: Record<string, unknown>
+  deletedTrips: string[]
 }
 
 const storePath = path.join(process.cwd(), 'data', 'admin-store.json')
@@ -36,14 +39,15 @@ function requirePersistentStorage(): void {
 }
 
 function createDefaultStore(): AdminStore {
-  return { trips: [], inquiries: [] }
+  return { trips: [], inquiries: [], siteContent: {}, deletedTrips: [] }
 }
 
 async function ensureStoreFile(): Promise<void> {
   await fs.mkdir(path.dirname(storePath), { recursive: true })
   try {
     await fs.access(storePath)
-  } catch {
+  } catch (error) {
+    if (!(error instanceof Error) || !('code' in error) || error.code !== 'ENOENT') throw error
     await fs.writeFile(storePath, JSON.stringify(createDefaultStore(), null, 2), 'utf8')
   }
 }
@@ -51,15 +55,15 @@ async function ensureStoreFile(): Promise<void> {
 export async function readAdminStore(): Promise<AdminStore> {
   await ensureStoreFile()
 
-  try {
-    const file = await fs.readFile(storePath, 'utf8')
-    const parsed = JSON.parse(file) as Partial<AdminStore>
-    return {
-      trips: Array.isArray(parsed.trips) ? parsed.trips as TravelTrip[] : [],
-      inquiries: Array.isArray(parsed.inquiries) ? parsed.inquiries as AdminInquiry[] : [],
-    }
-  } catch {
-    return createDefaultStore()
+  const file = await fs.readFile(storePath, 'utf8')
+  const parsed = JSON.parse(file) as Partial<AdminStore>
+  return {
+    trips: Array.isArray(parsed.trips) ? parsed.trips as TravelTrip[] : [],
+    inquiries: Array.isArray(parsed.inquiries) ? parsed.inquiries as AdminInquiry[] : [],
+    siteContent: parsed.siteContent && typeof parsed.siteContent === 'object' && !Array.isArray(parsed.siteContent)
+      ? parsed.siteContent as Record<string, unknown>
+      : {},
+    deletedTrips: Array.isArray(parsed.deletedTrips) ? parsed.deletedTrips.filter((slug): slug is string => typeof slug === 'string') : [],
   }
 }
 
@@ -68,12 +72,50 @@ export async function writeAdminStore(store: AdminStore): Promise<void> {
   await fs.writeFile(storePath, JSON.stringify(store, null, 2), 'utf8')
 }
 
+export async function getManagedSiteContent<T>(key: string, fallback: T): Promise<T> {
+  if (isDatabaseConfigured) {
+    try {
+      const [row] = await db.select({ content: travelSiteContent.content })
+        .from(travelSiteContent)
+        .where(eq(travelSiteContent.contentKey, key))
+        .limit(1)
+      if (row) return normalizeSiteContent(key, row.content) as T
+    } catch (error) {
+      console.error(`[admin-data] Could not read site content "${key}" from database; falling back to local content.`, error)
+    }
+  }
+
+  const store = await readAdminStore()
+  const content = store.siteContent[key] as T | undefined
+  return content === undefined ? fallback : normalizeSiteContent(key, content) as T
+}
+
+export async function upsertManagedSiteContent(key: string, content: unknown): Promise<void> {
+  requirePersistentStorage()
+  const normalizedContent = normalizeSiteContent(key, content)
+
+  if (isDatabaseConfigured) {
+    await db.insert(travelSiteContent)
+      .values({ contentKey: key, content: normalizedContent })
+      .onConflictDoUpdate({
+        target: travelSiteContent.contentKey,
+        set: { content: normalizedContent, updatedAt: new Date() },
+      })
+    return
+  }
+
+  const store = await readAdminStore()
+  store.siteContent[key] = normalizedContent
+  await writeAdminStore(store)
+}
+
 function toDbTripPayload(trip: TravelTrip) {
   const { slug, category, hotels, image, media, ...content } = trip
   return {
     slug,
     category,
     content,
+    hotels,
     imageUrls: Array.from(new Set([image, ...(media ?? []).map((entry) => entry.url).filter(Boolean)])),
     media: (media ?? []).map((entry) => ({
       type: entry.type,
@@ -90,11 +132,14 @@ export async function getManagedTrips(): Promise<TravelTrip[]> {
   if (isDatabaseConfigured) {
     try {
       const rows: Array<{ slug: string; category: string; content: Record<string, unknown>; imageUrls: string[] }> = await db.select().from(travelTrips).orderBy(asc(travelTrips.sortOrder))
-      if (!rows.length) return fallbackTrips
+      if (!rows.length) return []
 
       const mediaRows: Array<{ tripSlug: string; type: string; url: string; thumbnailUrl?: string | null; altText?: string | null; isPrimary?: boolean | null; sortOrder?: number | null }> = await db.select().from(travelTripMedia)
         .where(inArray(travelTripMedia.tripSlug, rows.map((row) => row.slug)))
         .orderBy(asc(travelTripMedia.sortOrder))
+      const hotelRows: Array<{ tripSlug: string; content: TravelTrip['hotels'][number]; stars?: number | null; mealPlan?: string | null; sortOrder?: number | null }> = await db.select().from(travelHotels)
+        .where(inArray(travelHotels.tripSlug, rows.map((row) => row.slug)))
+        .orderBy(asc(travelHotels.sortOrder))
 
       const mediaByTrip = new Map<string, TravelTrip['media']>()
       for (const media of mediaRows) {
@@ -109,6 +154,16 @@ export async function getManagedTrips(): Promise<TravelTrip[]> {
         })
         mediaByTrip.set(media.tripSlug, group)
       }
+      const hotelsByTrip = new Map<string, TravelTrip['hotels']>()
+      for (const hotel of hotelRows) {
+        const group = hotelsByTrip.get(hotel.tripSlug) ?? []
+        group.push({
+          ...hotel.content,
+          stars: hotel.stars ?? undefined,
+          meal: hotel.mealPlan ?? undefined,
+        })
+        hotelsByTrip.set(hotel.tripSlug, group)
+      }
 
       return rows.map((row) => ({
         ...(row.content as Partial<TravelTrip>),
@@ -116,7 +171,7 @@ export async function getManagedTrips(): Promise<TravelTrip[]> {
         category: row.category as TravelTrip['category'],
         image: row.imageUrls[0] ?? '',
         media: mediaByTrip.get(row.slug) ?? [],
-        hotels: [],
+        hotels: hotelsByTrip.get(row.slug) ?? [],
       } as TravelTrip))
     } catch (error) {
       console.error('[admin-data] Could not read trips from database; falling back to local store.', error)
@@ -128,6 +183,7 @@ export async function getManagedTrips(): Promise<TravelTrip[]> {
 
   for (const trip of fallbackTrips) merged.set(trip.slug, trip)
   for (const trip of store.trips) merged.set(trip.slug, trip)
+  for (const slug of store.deletedTrips) merged.delete(slug)
   return [...merged.values()]
 }
 
@@ -169,11 +225,23 @@ export async function upsertAdminTrip(trip: TravelTrip): Promise<TravelTrip> {
           sortOrder: index,
         })))
       }
+      await transaction.delete(travelHotels).where(eq(travelHotels.tripSlug, payload.slug))
+      if (payload.hotels.length) {
+        await transaction.insert(travelHotels).values(payload.hotels.map((hotel, index) => ({
+          tripSlug: payload.slug,
+          content: hotel,
+          stars: hotel.stars ?? null,
+          mealPlan: hotel.meal ?? null,
+          isPublished: true,
+          sortOrder: index,
+        })))
+      }
     })
     return trip
   }
 
   const store = await readAdminStore()
+  store.deletedTrips = store.deletedTrips.filter((slug) => slug !== trip.slug)
   const index = store.trips.findIndex((item) => item.slug === trip.slug)
   if (index >= 0) store.trips[index] = trip
   else store.trips.push(trip)
@@ -195,6 +263,7 @@ export async function deleteAdminTrip(slug: string): Promise<void> {
 
   const store = await readAdminStore()
   store.trips = store.trips.filter((trip) => trip.slug !== slug)
+  if (!store.deletedTrips.includes(slug)) store.deletedTrips.push(slug)
   await writeAdminStore(store)
 }
 

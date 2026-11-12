@@ -1,8 +1,8 @@
 import 'server-only'
 import { and, asc, eq, inArray } from 'drizzle-orm'
-import { getManagedTrips } from '@/lib/admin-data'
+import { getManagedSiteContent, getManagedTrips } from '@/lib/admin-data'
 import { db, isDatabaseConfigured } from '@/lib/db'
-import { travelHotels, travelSiteContent, travelTripMedia, travelTrips } from '@/lib/db/schema'
+import { travelHotels, travelTripMedia, travelTrips } from '@/lib/db/schema'
 import { trips as fallbackTrips, type TravelTrip } from '@/lib/travel-data'
 
 type TravelTripRecord = Omit<TravelTrip, 'slug' | 'category' | 'image' | 'media' | 'hotels'>
@@ -21,7 +21,7 @@ export async function getTravelTrips(featuredOnly = false): Promise<TravelTrip[]
       .where(featuredOnly ? and(eq(travelTrips.isFeatured, true), eq(travelTrips.isPublished, true)) : eq(travelTrips.isPublished, true))
       .orderBy(asc(travelTrips.sortOrder))) as Array<{ slug: string; category: string; content: TravelTripRecord; imageUrls: string[]; isPublished: boolean; isFeatured: boolean; sortOrder: number }>
 
-    if (!rows.length) return featuredOnly ? managedTrips.slice(0, 8) : managedTrips
+    if (!rows.length) return []
 
     const hotels = (await db
       .select()
@@ -70,8 +70,8 @@ export async function getTravelTrips(featuredOnly = false): Promise<TravelTrip[]
       })),
     }))
 
-    if (featuredOnly) return dbTrips.length ? dbTrips.slice(0, 8) : managedTrips.slice(0, 8)
-    return dbTrips.length ? dbTrips : managedTrips
+    if (featuredOnly) return dbTrips.slice(0, 8)
+    return dbTrips
   } catch (error) {
     console.error('[travel-store] Could not read published trips from Neon:', error)
     return featuredOnly ? managedTrips.slice(0, 8) : managedTrips
@@ -84,17 +84,5 @@ export async function getTravelTrip(slug: string): Promise<TravelTrip | undefine
 }
 
 export async function getTravelSiteContent<T>(contentKey: string, fallback: T): Promise<T> {
-  if (!isDatabaseConfigured) return fallback
-
-  try {
-    const [row] = await db
-      .select({ content: travelSiteContent.content })
-      .from(travelSiteContent)
-      .where(eq(travelSiteContent.contentKey, contentKey))
-      .limit(1)
-    return (row?.content as T | undefined) ?? fallback
-  } catch (error) {
-    console.error(`[travel-store] Could not read site content “${contentKey}” from Neon:`, error)
-    return fallback
-  }
+  return getManagedSiteContent(contentKey, fallback)
 }

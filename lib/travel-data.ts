@@ -170,14 +170,13 @@ export const trips: TravelTrip[] = [
 
 export const branches = [
   { key: 'alexandria', name: item('Alexandria · Head office', 'الإسكندرية · المقر الرئيسي'), address: item('26 El-Ghorfa El-Togareya St., Mahattet El-Raml', '٢٦ شارع الغرفة التجارية، محطة الرمل'), map: 'https://maps.google.com/?q=26+El-Ghorfa+El-Togareya+Street+Alexandria+Egypt' },
-  { key: 'cairo', name: item('Cairo', 'القاهرة'), address: item('5 El-Obour Buildings, Salah Salem, Nasr City', '٥ عمارات العبور، صلاح سالم، مدينة نصر'), map: 'https://maps.google.com/?q=El+Obour+Buildings+Salah+Salem+Cairo' },
-  { key: 'damanhour', name: item('Damanhour', 'دمنهور'), address: item('18 Abdel Salam El-Shazly St., next to Nasef', '١٨ شارع عبد السلام الشاذلي، بجوار ناصف'), map: 'https://maps.google.com/?q=Abdel+Salam+El+Shazly+Damanhour' }
+  { key: 'cairo', name: item('Cairo', 'القاهرة'), address: item('5 El-Obour Buildings, Salah Salem, Nasr City', '٥ عمارات العبور، صلاح سالم، مدينة نصر'), map: 'https://maps.google.com/?q=El+Obour+Buildings+Salah+Salem+Cairo' }
 ]
 
 export const whatsappContacts = [
   { label: item('Travel team', 'فريق السفر'), number: '201001859662', display: '0100 185 9662' },
   { label: item('Travel team', 'فريق السفر'), number: '201009035905', display: '0100 903 5905' },
-  { label: item('Umrah desk · verify number', 'مكتب العمرة · الرقم يحتاج تأكيد'), number: '2010120007714', display: '0101 2000 7714' }
+  { label: item('Umrah desk', 'مكتب العمرة'), number: '201210007714', display: '012 1000 7714' }
 ]
 
 export const categories: { id: TravelTrip['category']; title: Localized; summary: Localized }[] = [
@@ -195,11 +194,138 @@ export const mealPlans = [
   { code: 'AI', ar: 'أول إنكلوسيف', en: 'All inclusive' }
 ]
 
+export const homepageContent = {
+  heroEyebrow: item('A little closer to everywhere', 'خطوتك أقرب لكل مكان'),
+  headline: item('Go where your\nheart takes you.', 'روح للمكان\nاللي قلبك اختاره.'),
+  sub: item('Thoughtfully planned journeys, warm local care, and the freedom to simply enjoy the moment.', 'رحلات متخططة بحب، واهتمام من أهل البلد، ومساحة تعيش اللحظة بكل تفاصيلها.'),
+  featured: item('Explore all our trips', 'اكتشفوا كل رحلاتنا'),
+  featuredSub: item('From Umrah and honeymoons to international journeys and Egypt escapes.', 'من العمرة وشهر العسل إلى الرحلات الدولية وإجازات مصر.'),
+  stories: item('Travel, made personal', 'سفرك.. بطريقتك'),
+  storyBody: item('Whether it’s your first time in Makkah, a long-awaited honeymoon, or a spontaneous weekend by the sea — we’re here to make it feel like yours.', 'أول عمرة، شهر عسل مستنيينه، أو ويك إند على البحر.. إحنا هنا عشان الرحلة تبقى على ذوقك.'),
+  branches: item('Come say hello', 'مستنيينك تنورنا'),
+  branchSub: item('Three branches, one team that’s always happy to help.', '٣ فروع وفريق واحد دايماً جاهز يساعدك.'),
+}
+
 export const visaGuides = [
   { title: item('Türkiye', 'تركيا'), content: item('The supplied trip material lists a recent 6-month bank statement, employer HR letter, two 4×6 white-background photos, additional business or student documents as applicable, family documents when travelling together, and security clearance for ages 12–40. Some applicants may qualify for an online e-visa. Requirements change; confirm with the team before travel.', 'المادة المرسلة تذكر كشف حساب بنكي لآخر ٦ أشهر وخطاب موارد بشرية وصورتين ٤×٦ بخلفية بيضاء، ومستندات إضافية للأعمال أو الطلاب حسب الحالة، ومستندات الأسرة عند السفر معاً، وتصريحاً أمنياً للأعمار ١٢–٤٠ عاماً. قد تتاح تأشيرة إلكترونية لبعض المتقدمين. المتطلبات تتغير؛ يرجى التأكيد مع الفريق قبل السفر.') },
   { title: item('Tunisia', 'تونس'), content: item('The supplied New Year program says the company arranges the visa using a passport copy and that the visa sticker is issued on arrival. Confirm current entry policy before departure.', 'برنامج رأس السنة المرسل يذكر أن الشركة ترتب التأشيرة بصورة جواز السفر وأن ملصق التأشيرة يصدر عند الوصول. يرجى تأكيد سياسة الدخول الحالية قبل السفر.') },
   { title: item('Zanzibar · Tanzania', 'زنزيبار · تنزانيا'), content: item('The supplied program lists a visa on arrival and no pre-visa, a passport valid for at least six months, and a yellow-fever vaccination certificate completed at least 10 days before travel. Confirm the latest entry and health requirements.', 'البرنامج المرسل يذكر تأشيرة عند الوصول دون تأشيرة مسبقة وجوازاً صالحاً ٦ أشهر على الأقل وشهادة تطعيم الحمى الصفراء قبل السفر بـ١٠ أيام على الأقل. يرجى تأكيد أحدث متطلبات الدخول والصحة.') },
   { title: item('Lebanon', 'لبنان'), content: item('The supplied itinerary lists an entry visa on arrival at Beirut airport. Confirm current eligibility, documents and entry requirements with the travel team.', 'برنامج الرحلة المرسل يذكر تأشيرة دخول عند الوصول لمطار بيروت. يرجى تأكيد الأهلية والمستندات ومتطلبات الدخول الحالية مع فريق السفر.') }
+]
+
+export const visaServiceGroups: { title: Localized; countries: Localized[] }[] = [
+  {
+    title: item('Schengen visa assistance', 'تأشيرات أوروبا (الشنجن) المتاحة'),
+    countries: [
+      item('Estonia', 'إستونيا'), item('Italy', 'إيطاليا'), item('Portugal', 'البرتغال'), item('Belgium', 'بلجيكا'),
+      item('Bulgaria', 'بلغاريا'), item('Poland', 'بولندا'), item('Denmark', 'الدنمارك'), item('Romania', 'رومانيا'),
+      item('Slovakia', 'سلوفاكيا'), item('Slovenia', 'سلوفينيا'), item('Sweden', 'السويد'), item('France', 'فرنسا'),
+      item('Finland', 'فنلندا'), item('Croatia', 'كرواتيا'), item('Latvia', 'لاتفيا'), item('Lithuania', 'ليتوانيا'),
+      item('Malta', 'مالطا'), item('Hungary', 'المجر'), item('Austria', 'النمسا'), item('Netherlands', 'هولندا'),
+      item('Germany', 'ألمانيا'), item('Spain', 'إسبانيا'), item('Iceland', 'أيسلندا'),
+    ],
+  },
+  {
+    title: item('Visa files and appointment assistance', 'تجهيز ملفات ومواعيد التأشيرات'),
+    countries: [item('United States', 'أمريكا'), item('Canada', 'كندا'), item('Australia', 'أستراليا'), item('United Kingdom', 'إنجلترا'), item('Brazil', 'البرازيل')],
+  },
+  {
+    title: item('Additional destinations', 'وجهات أخرى'),
+    countries: [item('Cyprus', 'قبرص'), item('Mexico', 'المكسيك')],
+  },
+  {
+    title: item('Asia visa assistance', 'تأشيرات آسيا'),
+    countries: [item('China', 'الصين'), item('South Korea', 'كوريا'), item('Japan', 'اليابان')],
+  },
+  {
+    title: item('Tourist destinations', 'وجهات سياحية'),
+    countries: [item('Singapore', 'سنغافورة'), item('Thailand', 'تايلاند')],
+  },
+  {
+    title: item('Online visa assistance', 'تأشيرات أونلاين'),
+    countries: [
+      item('Georgia', 'جورجيا'), item('Qatar', 'قطر'), item('United Arab Emirates', 'الإمارات'),
+      item('Oman', 'سلطنة عمان'), item('Vietnam', 'فيتنام'), item('Türkiye', 'تركيا'), item('Armenia', 'أرمينيا'),
+    ],
+  },
+]
+
+export const visaSupportServices: Localized[] = [
+  item('Complete visa file preparation', 'تجهيز ملف التأشيرة بالكامل'),
+  item('Careful review of your documents', 'مراجعة الأوراق بدقة'),
+  item('Appointment booking and application follow-up', 'حجز المواعيد ومتابعة الإجراءات'),
+]
+
+export const hotelDirectory: { destination: Localized; hotels: Localized[] }[] = [
+  {
+    destination: item('Hurghada', 'الغردقة'),
+    hotels: [
+      item('Amwaj Beach Abu Soma', 'أمواج بيتش أبو سوما'), item('Royal Lagoons', 'رويال لاجونز'),
+      item('Sea Gull Beach Resort', 'سي جل بيتش ريزورت'), item('Sunny Days El Palacio', 'صني دايز البلاسيو'),
+      item('Sunny Days Palma', 'صني دايز بالما'), item('Sunny Days Mirette Family', 'صني دايز ميريت فاميلي'),
+      item('Serenity Fun City', 'سيرينتي فن سيتي'), item('Sindbad Aqua Park', 'سندباد أكوا بارك'),
+      item('Jasmine Palace', 'جاسمين بالاس'), item('Stella Garden', 'ستيلا جاردن'),
+      item('Stella Beach', 'ستيلا بيتش'), item('Giftun Azur', 'جيفتون أزور'),
+      item('Serry Beach', 'سيري بيتش'), item('El Palacio', 'البلاچيو'),
+      item('White Valley Mabni Palace', 'وايت فالي مبني بالاس'), item('Sea Star Beau Rivage', 'سي ستار بوريفاج'),
+      item('Panorama Bungalows El Gouna', 'بانوراما الجونة'), item('Xanadu Makadi Bay', 'زانا دو مكادي'),
+      item('Titanic Palace', 'تايتنك بالاس'), item('Titanic Beach', 'تايتنك بيتش'),
+      item('Shams Abu Soma', 'شمس أبو سوما'), item('Al Basha Resort', 'الباشا ريزورت'),
+      item('Kaisol Romance Resort', 'كايسول رومانس'), item('Tropitel Sahl Hasheesh', 'تروبيتال سهل حشيش'),
+      item('Premier Le Reve', 'بريمير لو ريف'), item('Sun Beach Abu Soma', 'صن بيتش أبو سوما'),
+      item('Gravity Sahl Hasheesh', 'جرافيتي سهل حشيش'), item('Gravity Hotel & Aqua Park', 'جرافيتي الممشى'),
+      item('Zya Regina Resort', 'زيا ريجينا'), item('Elysee Hotel', 'الإليزيه'),
+      item('Magic Beach Hotel', 'ماجيك بيتش'), item('Paradise Abu Soma', 'باراديس أبو سوما'),
+      item('Coral Sun Safaga', 'كورال صن سفاجا'), item('Sunrise Hotels Group · special rates', 'مجموعة صن رايز · أسعار خاصة'),
+      item('Pickalbatros Hotels Group · special rates', 'مجموعة الباتروس · أسعار خاصة'),
+    ],
+  },
+  {
+    destination: item('Sharm El Sheikh', 'شرم الشيخ'),
+    hotels: [
+      item('Jaz Dreams', 'چاز دريم'), item('Jaz Al Fairoz', 'چاز الفيروز'),
+      item('Amwaj Oyoun Resort', 'أمواج عيون'), item('Parrotel Aqua Park', 'باروتيل أكوا بارك'),
+      item('Parrotel Lagoon Resort', 'باروتيل لاجون'), item('Dreams Vacation Resort', 'دريمز فاكيشن'),
+      item('Dreams Beach Resort', 'دريمز بيتش'), item('DoubleTree by Hilton', 'هيلتون دبل تري'),
+      item('Parrotel Aqua', 'باروتيل أكوا'), item('Continental Plaza Beach Resort', 'كونتيننتال بلازا'),
+      item('Charmillion Hotels Group', 'مجموعة شارمليون'), item('Promenade Beach Resort', 'بروميناد بيتش'),
+      item('Promenade Mountain Resort', 'بروميناد ماونتين'), item('Panorama Naama Heights', 'بانوراما نعمة هايتس'),
+      item('Uni Sharm', 'يوني شرم'),
+    ],
+  },
+  {
+    destination: item('Ain Sokhna', 'السخنة'),
+    hotels: [
+      item('Tolip Majestic', 'توليب ماجيستك'), item('Tolip Heights', 'توليب هايتس'),
+      item('Tolip Hills', 'توليب هيلز'), item('Stella Sea Club', 'ستيلا سي كلوب'),
+      item('La Cabana Beach Resort', 'لاكابانا بيتش'), item('Eastern El Galala', 'إيسترن الجلالة'),
+      item('Coral Sea Beach', 'كورال سي بيتش'), item('Retal Sokhna Hotel', 'ريتال السخنة'),
+      item('Palmera Beach Resort', 'باليمرا بيتش'), item('Coral Sea Beach Aqua Park', 'كورال سي بيتش أكوا بارك'),
+      item('Cancun Sokhna Resort', 'كانكون السخنة'), item('Porto Sokhna', 'بورتو السخنة'),
+    ],
+  },
+  {
+    destination: item('New Alamein', 'العالمين'),
+    hotels: [
+      item('Gewan Resort', 'چيوان ريزورت'), item('Gewan White', 'چيوان وايت'),
+      item('Gewan Palace', 'چيوان بالاس'), item('Ghazala Beach Alamein', 'غزالة بيتش العالمين'),
+      item('Rixos Alamein', 'ريكسوس العالمين'), item('Concha Beach', 'كونشا بيتش'),
+      item('Azur One Eleven', 'أزور وان إليڤين'), item('Days Inn Alamein', 'دايز إن العالمين'),
+    ],
+  },
+  {
+    destination: item('Marsa Alam', 'مرسى علم'),
+    hotels: [
+      item('Protels Crystal', 'بروتيلز كريستال'), item('Sataya Resort', 'سطايا'),
+      item('Amarina Queen Resort', 'أمارينا كوين'), item('Three Corners Happy Life', 'ثري كورنر هابي لايف'),
+      item('Fantazia Resort', 'فانتازيا ريزورت'), item('Serena Beach Resort', 'سيرينا بيتش'),
+      item('Sentido Akassia', 'سنتيدو أكاسيا'), item('Diamond Beach', 'دايموند بيتش'),
+      item('Amarina Jannah', 'أمارينا جنة'), item('Casa Mare Resort', 'كازا ماري'),
+      item('Casa Blue Resort', 'كازا بلو'), item('MG Alexander the Great', 'إم جي ألكسندر'),
+      item('Marina Resort Port Ghalib · Radisson', 'مارينا راديسون بورت غالب'),
+      item('Jaz Neo Reef', 'چاز نيو ريف'),
+    ],
+  },
 ]
 
 export const faqs: { question: Localized; answer: Localized }[] = [
@@ -208,7 +334,7 @@ export const faqs: { question: Localized; answer: Localized }[] = [
   { question: item('Can I choose a different hotel or date?', 'ينفع أختار فندق أو تاريخ مختلف؟'), answer: item('Ask the team about available hotels, room types and departure dates. Options depend on the trip and current availability.', 'اسأل فريقنا عن الفنادق وأنواع الغرف ومواعيد السفر المتاحة. الاختيارات حسب الرحلة والتوافر الحالي.'), },
   { question: item('Do children have special arrangements?', 'هل فيه ترتيبات خاصة للأطفال؟'), answer: item('Child and infant arrangements vary by trip and hotel. Include each child’s age in your inquiry so the team can check the right option.', 'ترتيبات الأطفال والرضع تختلف حسب الرحلة والفندق. اذكر عمر كل طفل في الاستفسار عشان الفريق يراجع الاختيار المناسب.'), },
   { question: item('Can you help with visas?', 'هل بتساعدوا في التأشيرات؟'), answer: item('See the visa guide and the requirements listed on each trip page. Rules change and final approval belongs to the relevant authorities; confirm current requirements before booking.', 'راجع دليل التأشيرات ومتطلبات كل رحلة. القواعد تتغير والقرار النهائي للجهات المختصة؛ تأكد من المتطلبات الحالية قبل الحجز.'), },
-  { question: item('Where can I find your branches?', 'فين فروعكم؟'), answer: item('K Egypt Travel has offices in Alexandria, Cairo and Damanhour. Use the Contact page for addresses and map links.', 'كي إيجيبت ترافل ليها فروع في الإسكندرية والقاهرة ودمنهور. صفحة التواصل فيها العناوين وروابط الخرائط.'), },
+  { question: item('Where can I find your branches?', 'فين فروعكم؟'), answer: item('K Egypt Travel has offices in Alexandria and Cairo. Use the Contact page for addresses and map links.', 'كي إيجيبت ترافل ليها فروع في الإسكندرية والقاهرة. صفحة التواصل فيها العناوين وروابط الخرائط.'), },
   { question: item('What should I know before booking?', 'إيه المهم أعرفه قبل الحجز؟'), answer: item('Review the trip-specific notes and general travel terms, then ask the team about current payment, cancellation, baggage and schedule rules on WhatsApp.', 'راجع ملاحظات الرحلة وشروط السفر العامة، واسأل الفريق عن شروط السداد والإلغاء والأمتعة والمواعيد الحالية على واتساب.'), },
 ]
 

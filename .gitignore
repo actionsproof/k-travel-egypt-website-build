@@ -9,6 +9,7 @@
 
 # production
 /build
+/data/admin-store.json
 
 # debug
 npm-debug.log*

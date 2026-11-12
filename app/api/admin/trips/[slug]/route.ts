@@ -30,7 +30,13 @@ export async function POST(request: Request, { params }: { params: Promise<{ slu
   const existing = (await getManagedTrips()).find((item) => item.slug === slug)
   if (!existing) return NextResponse.json({ error: 'Trip not found.' }, { status: 404 })
 
-  const trip = normalizeAdminTrip(formData, existing)
+  let trip
+  try {
+    trip = normalizeAdminTrip(formData, existing)
+  } catch (error) {
+    if (error instanceof Error) return NextResponse.json({ error: error.message }, { status: 400 })
+    throw error
+  }
   await upsertAdminTrip(trip)
   return NextResponse.redirect(new URL('/admin', request.url))
 }

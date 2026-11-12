@@ -15,7 +15,13 @@ export async function POST(request: Request) {
   if (unauthorized) return unauthorized
 
   const formData = await request.formData()
-  const trip = normalizeAdminTrip(formData)
+  let trip
+  try {
+    trip = normalizeAdminTrip(formData)
+  } catch (error) {
+    if (error instanceof Error) return NextResponse.json({ error: error.message }, { status: 400 })
+    throw error
+  }
   await upsertAdminTrip(trip)
   return NextResponse.redirect(new URL('/admin', request.url))
 }

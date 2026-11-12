@@ -1,11 +1,25 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { getAllowedAdminEmails, getCurrentAdminEmail } from '@/lib/admin-auth'
-import { getManagedTrips, listInquiries } from '@/lib/admin-data'
+import { getManagedSiteContent, getManagedTrips, listInquiries } from '@/lib/admin-data'
 import { isDatabaseConfigured } from '@/lib/db'
 import { AdminMediaFields } from '@/components/admin-media-fields'
+import { AdminSiteContentEditor } from '@/components/admin-site-content-editor'
+import { SITE_CONTENT_DEFAULTS, type SiteContentKey } from '@/lib/site-content'
 
 export const dynamic = 'force-dynamic'
+
+const newTripDetails = JSON.stringify({
+  dates: null,
+  hotels: [],
+  flights: [],
+  itinerary: [],
+  visa: null,
+  terms: [],
+  notes: [],
+  includes: [],
+  excludes: [],
+}, null, 2)
 
 export default async function AdminPage() {
   const adminEmail = await getCurrentAdminEmail()
@@ -15,8 +29,15 @@ export default async function AdminPage() {
   }
 
   const allowedEmails = await getAllowedAdminEmails()
-  const trips = await getManagedTrips()
-  const inquiries = await listInquiries()
+  const [trips, inquiries, siteContentEntries] = await Promise.all([
+    getManagedTrips(),
+    listInquiries(),
+    Promise.all((Object.entries(SITE_CONTENT_DEFAULTS) as [SiteContentKey, unknown][]).map(async ([key, fallback]) => [
+      key,
+      await getManagedSiteContent(key, fallback),
+    ])),
+  ])
+  const siteContent = Object.fromEntries(siteContentEntries) as Record<SiteContentKey, unknown>
 
   return (
     <main style={{ maxWidth: 1400, margin: '48px auto', padding: '0 20px 80px', fontFamily: 'sans-serif', color: '#111827' }}>
@@ -101,20 +122,10 @@ export default async function AdminPage() {
               <textarea name="summaryAr" placeholder="ملخص بالعربي" rows={3} defaultValue="استمتع برحلة منظمة مع تواريخ مرنة ودعم محلي من فريقنا." style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #d1d5db' }} />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-              <input name="includeEn" placeholder="Includes EN" defaultValue="Transfers and hotel stay" style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #d1d5db' }} />
-              <input name="includeAr" placeholder="يشمل بالعربي" defaultValue="النقل والإقامة" style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #d1d5db' }} />
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-              <input name="excludeEn" placeholder="Excludes EN" defaultValue="Flights and optional extras" style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #d1d5db' }} />
-              <input name="excludeAr" placeholder="لا يشمل بالعربي" defaultValue="الطيران والإضافات الاختيارية" style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #d1d5db' }} />
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-              <input name="noteEn" placeholder="Note EN" defaultValue="Ask on WhatsApp for the latest details." style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #d1d5db' }} />
-              <input name="noteAr" placeholder="ملاحظة بالعربي" defaultValue="اسألنا عبر واتساب للحصول على التفاصيل الأخيرة." style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #d1d5db' }} />
-            </div>
+            <label style={{ display: 'grid', gap: 6, color: '#374151', fontSize: 13, fontWeight: 600 }}>
+              Full trip details (JSON): dates, hotels, flights, itinerary, visa, terms, notes, includes and excludes
+              <textarea name="tripDetailsJson" rows={16} defaultValue={newTripDetails} spellCheck={false} style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #d1d5db', fontFamily: 'ui-monospace, SFMono-Regular, Consolas, monospace', fontSize: 13, direction: 'ltr', textAlign: 'left' }} />
+            </label>
 
             <button type="submit" style={{ background: '#111827', color: '#fff', border: 'none', borderRadius: 10, padding: '12px 18px', fontWeight: 700, cursor: 'pointer' }}>
               Save trip
@@ -158,6 +169,26 @@ export default async function AdminPage() {
                   <input name="slug" defaultValue={trip.slug} readOnly aria-label="Trip slug (cannot be changed after creation)" style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid #d1d5db', background: '#f9fafb' }} />
                   <input name="image" defaultValue={trip.image} style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid #d1d5db' }} />
                   <AdminMediaFields />
+                  <label style={{ display: 'grid', gap: 6, color: '#374151', fontSize: 13, fontWeight: 600 }}>
+                    Full trip details (JSON)
+                    <textarea
+                      name="tripDetailsJson"
+                      rows={14}
+                      spellCheck={false}
+                      defaultValue={JSON.stringify({
+                        dates: trip.dates ?? null,
+                        hotels: trip.hotels,
+                        flights: trip.flights ?? [],
+                        itinerary: trip.itinerary ?? [],
+                        visa: trip.visa ?? null,
+                        terms: trip.terms ?? [],
+                        notes: trip.notes ?? [],
+                        includes: trip.includes,
+                        excludes: trip.excludes,
+                      }, null, 2)}
+                      style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid #d1d5db', fontFamily: 'ui-monospace, SFMono-Regular, Consolas, monospace', fontSize: 12, direction: 'ltr', textAlign: 'left' }}
+                    />
+                  </label>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
                     <textarea name="galleryImages" placeholder="Image URLs (one per line)" defaultValue={(trip.media ?? []).filter((item) => item.type === 'image' && !item.isPrimary).map((item) => item.url).join('\n')} rows={2} style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid #d1d5db' }} />
                     <textarea name="galleryVideos" placeholder="Video URLs (one per line)" defaultValue={(trip.media ?? []).filter((item) => item.type === 'video').map((item) => item.url).join('\n')} rows={2} style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid #d1d5db' }} />
@@ -176,6 +207,8 @@ export default async function AdminPage() {
           </div>
         </div>
       </section>
+
+      <AdminSiteContentEditor initialContent={siteContent} />
 
       <section style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 18, padding: 22 }}>
         <h2 style={{ margin: '0 0 18px', fontSize: 22 }}>Inquiries</h2>
