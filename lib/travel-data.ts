@@ -8,6 +8,14 @@ export type TravelHotel = {
   distance?: Localized
   note?: Localized
 }
+export type TravelMedia = {
+  type: 'image' | 'video'
+  url: string
+  thumbnail?: string
+  alt?: string
+  isPrimary?: boolean
+  sortOrder?: number
+}
 export type TravelTrip = {
   slug: string
   category: 'umrah' | 'honeymoon' | 'international' | 'domestic'
@@ -16,6 +24,7 @@ export type TravelTrip = {
   duration: Localized
   dates?: Localized
   image: string
+  media?: TravelMedia[]
   tag: Localized
   summary: Localized
   hotels: TravelHotel[]

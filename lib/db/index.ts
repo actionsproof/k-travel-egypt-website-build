@@ -4,18 +4,36 @@ import { drizzle } from 'drizzle-orm/node-postgres'
 import * as schema from './schema'
 
 const connectionString = process.env.DATABASE_URL
-if (!connectionString) throw new Error('DATABASE_URL is required to use the travel database.')
+export const isDatabaseConfigured = Boolean(connectionString)
 
-type DatabaseGlobal = typeof globalThis & { travelDatabasePool?: Pool }
+const createUnavailableDb = () => {
+  const builder = {
+    from: () => builder,
+    where: () => builder,
+    orderBy: async () => [],
+    limit: async () => [],
+    returning: async () => [],
+    values: () => builder,
+  }
+
+  return {
+    select: () => builder,
+    insert: () => builder,
+  } as any
+}
+
+type DatabaseGlobal = typeof globalThis & { travelDatabasePool?: Pool | null }
 const globalForDatabase = globalThis as DatabaseGlobal
 
-export const pool = globalForDatabase.travelDatabasePool ?? new Pool({
-  connectionString,
-  max: 5,
-  idleTimeoutMillis: 30_000,
-  connectionTimeoutMillis: 10_000,
-})
+export const pool = connectionString
+  ? (globalForDatabase.travelDatabasePool ?? new Pool({
+      connectionString,
+      max: 5,
+      idleTimeoutMillis: 30_000,
+      connectionTimeoutMillis: 10_000,
+    }))
+  : null
 
-if (process.env.NODE_ENV !== 'production') globalForDatabase.travelDatabasePool = pool
+if (process.env.NODE_ENV !== 'production' && pool) globalForDatabase.travelDatabasePool = pool
 
-export const db = drizzle(pool, { schema })
+export const db = connectionString ? drizzle(pool!, { schema }) : createUnavailableDb()

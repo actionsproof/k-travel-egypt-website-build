@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { and, eq } from 'drizzle-orm'
-import { db } from '@/lib/db'
+import { appendInquiry, getManagedTrips } from '@/lib/admin-data'
+import { db, isDatabaseConfigured } from '@/lib/db'
 import { travelInquiries, travelTrips } from '@/lib/db/schema'
 
 export const runtime = 'nodejs'
@@ -41,6 +42,30 @@ export async function POST(request: Request) {
   if (!Number.isInteger(children) || children < 0 || children > 20) return NextResponse.json({ error: 'Children must be between 0 and 20.' }, { status: 400 })
   if (childAges.some((age) => age < 0 || age > 17) || childAges.length > children) return NextResponse.json({ error: 'Please check the child ages.' }, { status: 400 })
   if (preferredDate && !/^\d{4}-\d{2}-\d{2}$/.test(preferredDate)) return NextResponse.json({ error: 'Please choose a valid preferred date.' }, { status: 400 })
+
+  if (!isDatabaseConfigured) {
+    const managedTrips = await getManagedTrips()
+    if (tripSlug && !managedTrips.some((trip) => trip.slug === tripSlug)) {
+      return NextResponse.json({ error: 'Please choose a published trip.' }, { status: 400 })
+    }
+
+    const inquiry = await appendInquiry({
+      id: `local-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+      name,
+      phone,
+      tripSlug,
+      hotel,
+      adults,
+      children,
+      preferredDate,
+      notes,
+      locale,
+      status: 'new',
+      createdAt: new Date().toISOString(),
+    })
+
+    return NextResponse.json({ ok: true, id: inquiry.id }, { status: 201 })
+  }
 
   try {
     if (tripSlug) {
