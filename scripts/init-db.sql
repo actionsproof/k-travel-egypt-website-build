@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS travel_trips (
 
 CREATE TABLE IF NOT EXISTS travel_hotels (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  trip_slug TEXT NOT NULL,
+  trip_slug TEXT NOT NULL CONSTRAINT travel_hotels_trip_slug_fk REFERENCES travel_trips(slug) ON DELETE CASCADE,
   content JSONB NOT NULL DEFAULT '{}'::jsonb,
   stars SMALLINT,
   meal_plan TEXT,
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS travel_hotels (
 
 CREATE TABLE IF NOT EXISTS travel_trip_media (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  trip_slug TEXT NOT NULL,
+  trip_slug TEXT NOT NULL CONSTRAINT travel_trip_media_trip_slug_fk REFERENCES travel_trips(slug) ON DELETE CASCADE,
   type TEXT NOT NULL DEFAULT 'image',
   url TEXT NOT NULL,
   thumbnail_url TEXT,
@@ -78,3 +78,28 @@ CREATE INDEX IF NOT EXISTS travel_trips_publish_sort_idx ON travel_trips (is_pub
 CREATE INDEX IF NOT EXISTS travel_hotels_trip_sort_idx ON travel_hotels (trip_slug, sort_order);
 CREATE INDEX IF NOT EXISTS travel_trip_media_trip_sort_idx ON travel_trip_media (trip_slug, sort_order);
 CREATE INDEX IF NOT EXISTS travel_inquiries_status_created_idx ON travel_inquiries (status, created_at);
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'travel_hotels_trip_slug_fk'
+      AND conrelid = 'public.travel_hotels'::regclass
+  ) THEN
+    ALTER TABLE public.travel_hotels
+      ADD CONSTRAINT travel_hotels_trip_slug_fk
+      FOREIGN KEY (trip_slug) REFERENCES public.travel_trips(slug)
+      ON DELETE CASCADE NOT VALID;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'travel_trip_media_trip_slug_fk'
+      AND conrelid = 'public.travel_trip_media'::regclass
+  ) THEN
+    ALTER TABLE public.travel_trip_media
+      ADD CONSTRAINT travel_trip_media_trip_slug_fk
+      FOREIGN KEY (trip_slug) REFERENCES public.travel_trips(slug)
+      ON DELETE CASCADE NOT VALID;
+  END IF;
+END $$;

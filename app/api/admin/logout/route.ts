@@ -3,7 +3,7 @@ import { clearAdminSession } from '@/lib/admin-auth'
 
 export const runtime = 'nodejs'
 
-export async function POST() {
+export async function POST(request: Request) {
   await clearAdminSession()
-  return NextResponse.redirect(new URL('/admin/login', process.env.APP_URL ?? 'http://localhost:3000'))
+  return NextResponse.redirect(new URL('/admin/login', request.url))
 }

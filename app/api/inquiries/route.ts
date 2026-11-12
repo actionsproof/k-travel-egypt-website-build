@@ -44,6 +44,10 @@ export async function POST(request: Request) {
   if (preferredDate && !/^\d{4}-\d{2}-\d{2}$/.test(preferredDate)) return NextResponse.json({ error: 'Please choose a valid preferred date.' }, { status: 400 })
 
   if (!isDatabaseConfigured) {
+    if (process.env.NODE_ENV === 'production') {
+      return NextResponse.json({ error: 'Inquiry storage is not configured. Please contact us on WhatsApp.' }, { status: 503 })
+    }
+
     const managedTrips = await getManagedTrips()
     if (tripSlug && !managedTrips.some((trip) => trip.slug === tripSlug)) {
       return NextResponse.json({ error: 'Please choose a published trip.' }, { status: 400 })

@@ -1,12 +1,14 @@
 import 'server-only'
 import { Pool } from 'pg'
-import { drizzle } from 'drizzle-orm/node-postgres'
+import { drizzle, type NodePgDatabase } from 'drizzle-orm/node-postgres'
 import * as schema from './schema'
 
 const connectionString = process.env.DATABASE_URL
 export const isDatabaseConfigured = Boolean(connectionString)
 
-const createUnavailableDb = () => {
+type TravelDatabase = NodePgDatabase<typeof schema>
+
+const createUnavailableDb = (): TravelDatabase => {
   const builder = {
     from: () => builder,
     where: () => builder,
@@ -19,7 +21,7 @@ const createUnavailableDb = () => {
   return {
     select: () => builder,
     insert: () => builder,
-  } as any
+  } as unknown as TravelDatabase
 }
 
 type DatabaseGlobal = typeof globalThis & { travelDatabasePool?: Pool | null }
@@ -36,4 +38,4 @@ export const pool = connectionString
 
 if (process.env.NODE_ENV !== 'production' && pool) globalForDatabase.travelDatabasePool = pool
 
-export const db = connectionString ? drizzle(pool!, { schema }) : createUnavailableDb()
+export const db: TravelDatabase = connectionString ? drizzle(pool!, { schema }) : createUnavailableDb()

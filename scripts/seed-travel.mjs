@@ -2,9 +2,10 @@ import { createHash } from 'node:crypto'
 import { Pool } from 'pg'
 import { branches, categories, faqs, generalTerms, mealPlans, travelImages, trips, visaGuides, whatsappContacts } from '../lib/travel-data.ts'
 
-if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL is required to seed the travel catalog.')
+const databaseUrl = process.env.DATABASE_URL_UNPOOLED ?? process.env.DATABASE_URL
+if (!databaseUrl) throw new Error('DATABASE_URL_UNPOOLED or DATABASE_URL is required to seed the travel catalog.')
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL, max: 1 })
+const pool = new Pool({ connectionString: databaseUrl, max: 1 })
 const deterministicUuid = (value) => {
   const bytes = createHash('sha1').update(value).digest().subarray(0, 16)
   bytes[6] = (bytes[6] & 0x0f) | 0x50

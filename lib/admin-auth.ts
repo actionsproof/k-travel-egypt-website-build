@@ -1,4 +1,4 @@
-import { createHmac, timingSafeEqual } from 'node:crypto'
+import { createHash, createHmac, timingSafeEqual } from 'node:crypto'
 import { cookies } from 'next/headers'
 import { eq } from 'drizzle-orm'
 import { db, isDatabaseConfigured } from '@/lib/db'
@@ -46,7 +46,25 @@ export async function isAllowedAdminEmail(email: string | null | undefined): Pro
 }
 
 export function getAdminCookieSecret(): string {
-  return process.env.NEON_AUTH_COOKIE_SECRET ?? 'development-admin-cookie-secret'
+  const secret = process.env.NEON_AUTH_COOKIE_SECRET
+  if (process.env.NODE_ENV === 'production') {
+    if (!secret || secret.length < 32) {
+      throw new Error('NEON_AUTH_COOKIE_SECRET must contain at least 32 characters in production.')
+    }
+  }
+  return secret ?? 'development-admin-cookie-secret'
+}
+
+export function verifyAdminPassword(candidate: string): boolean {
+  const expected = process.env.ADMIN_PASSWORD
+  if (!expected) return process.env.NODE_ENV !== 'production' && candidate === ''
+  if (expected.length < 16) {
+    throw new Error('ADMIN_PASSWORD must contain at least 16 characters.')
+  }
+
+  const candidateHash = createHash('sha256').update(candidate).digest()
+  const expectedHash = createHash('sha256').update(expected).digest()
+  return timingSafeEqual(candidateHash, expectedHash)
 }
 
 function encodePayload(value: string): string {

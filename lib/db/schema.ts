@@ -19,7 +19,7 @@ export const travelTrips = pgTable('travel_trips', {
 
 export const travelHotels = pgTable('travel_hotels', {
   id: uuid('id').primaryKey().defaultRandom(),
-  tripSlug: text('trip_slug').notNull(),
+  tripSlug: text('trip_slug').notNull().references(() => travelTrips.slug, { onDelete: 'cascade' }),
   content: jsonb('content').$type<TravelHotel>().notNull().default({ ar: '', en: '' }),
   stars: smallint('stars'),
   mealPlan: text('meal_plan'),
@@ -31,7 +31,7 @@ export const travelHotels = pgTable('travel_hotels', {
 
 export const travelTripMedia = pgTable('travel_trip_media', {
   id: uuid('id').primaryKey().defaultRandom(),
-  tripSlug: text('trip_slug').notNull(),
+  tripSlug: text('trip_slug').notNull().references(() => travelTrips.slug, { onDelete: 'cascade' }),
   type: text('type').notNull().default('image'),
   url: text('url').notNull(),
   thumbnailUrl: text('thumbnail_url'),

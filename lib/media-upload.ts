@@ -1,44 +1,23 @@
-import { promises as fs } from 'node:fs'
-import path from 'node:path'
-import { randomUUID } from 'node:crypto'
+export const MEDIA_UPLOAD_LIMITS = {
+  imageBytes: 25 * 1024 * 1024,
+  videoBytes: 250 * 1024 * 1024,
+} as const
 
-export type MediaKind = 'image' | 'video'
+export const MEDIA_CONTENT_TYPES = {
+  image: ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif'],
+  video: ['video/mp4', 'video/webm', 'video/quicktime'],
+} as const
 
-export function toText(value: FormDataEntryValue | null | undefined, fallback = ''): string {
-  return typeof value === 'string' ? value.trim() : fallback
-}
-
-export function parseTextMediaUrls(raw: string, mediaKind: MediaKind): string[] {
+export function parseTextMediaUrls(raw: string): string[] {
   if (!raw) return []
 
   return raw
     .split(/[\r\n,]+/)
     .map((entry) => entry.trim())
-    .filter(Boolean)
-    .map((url) => url.replace(/\s+/g, ''))
-    .filter((url) => /^(https?:\/\/|\/)/i.test(url))
+    .filter((url) => /^https?:\/\//i.test(url) || /^\/uploads\/[a-zA-Z0-9._-]+$/.test(url))
     .filter((value, index, list) => list.indexOf(value) === index)
 }
 
-export async function saveUploadedFiles(entries: FormDataEntryValue[] | File[] | null | undefined, mediaKind?: MediaKind): Promise<string[]> {
-  const files = (entries ?? []).filter((entry): entry is File => entry instanceof File && entry.size > 0)
-  if (!files.length) return []
-
-  const uploadDir = path.join(process.cwd(), 'public', 'uploads')
-  await fs.mkdir(uploadDir, { recursive: true })
-
-  const urls: string[] = []
-
-  for (const file of files) {
-    const resolvedKind = mediaKind ?? (file.type?.startsWith('video/') ? 'video' : 'image')
-    const extension = path.extname(file.name) || (resolvedKind === 'video' ? '.mp4' : '.jpg')
-    const fileName = `${Date.now()}-${randomUUID()}${extension}`
-    const filePath = path.join(uploadDir, fileName)
-    const buffer = Buffer.from(await file.arrayBuffer())
-
-    await fs.writeFile(filePath, buffer)
-    urls.push(`/uploads/${fileName}`)
-  }
-
-  return urls
+export function toText(value: FormDataEntryValue | null | undefined, fallback = ''): string {
+  return typeof value === 'string' ? value.trim() : fallback
 }

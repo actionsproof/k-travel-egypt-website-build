@@ -18,7 +18,7 @@ export default async function AdminLoginPage() {
 
         {allowedEmails.length === 0 ? (
           <div style={{ background: '#fef3c7', border: '1px solid #facc15', borderRadius: 12, padding: 14, color: '#78350f' }}>
-            Set <code>ADMIN_EMAIL</code> and <code>NEON_AUTH_COOKIE_SECRET</code> in your environment before using the admin panel.
+            Set <code>ADMIN_EMAIL</code>, <code>ADMIN_PASSWORD</code>, and <code>NEON_AUTH_COOKIE_SECRET</code> in your environment before using the admin panel.
           </div>
         ) : (
           <form action="/api/admin/login" method="POST" style={{ display: 'grid', gap: 16, marginTop: 20 }}>
@@ -29,6 +29,17 @@ export default async function AdminLoginPage() {
                 name="email"
                 defaultValue={allowedEmails[0]}
                 required
+                style={{ padding: '12px 14px', border: '1px solid #d1d5db', borderRadius: 10, fontSize: 16 }}
+              />
+            </label>
+
+            <label style={{ display: 'grid', gap: 8 }}>
+              <span style={{ fontSize: 14, fontWeight: 600, color: '#374151' }}>Admin password</span>
+              <input
+                type="password"
+                name="password"
+                autoComplete="current-password"
+                required={process.env.NODE_ENV === 'production' || Boolean(process.env.ADMIN_PASSWORD)}
                 style={{ padding: '12px 14px', border: '1px solid #d1d5db', borderRadius: 10, fontSize: 16 }}
               />
             </label>

@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { getAllowedAdminEmails, getCurrentAdminEmail } from '@/lib/admin-auth'
 import { getManagedTrips, listInquiries } from '@/lib/admin-data'
 import { isDatabaseConfigured } from '@/lib/db'
+import { AdminMediaFields } from '@/components/admin-media-fields'
 
 export const dynamic = 'force-dynamic'
 
@@ -88,17 +89,8 @@ export default async function AdminPage() {
               <input name="tagAr" placeholder="التاج بالعربي" defaultValue="مميز" style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #d1d5db' }} />
             </div>
 
-            <input name="image" placeholder="Image URL" defaultValue="https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=1200&q=85" style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #d1d5db' }} />
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-              <label style={{ display: 'grid', gap: 6, color: '#374151', fontSize: 13, fontWeight: 600 }}>
-                Cover file
-                <input type="file" name="coverFile" accept="image/*" style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #d1d5db', background: '#fff' }} />
-              </label>
-              <label style={{ display: 'grid', gap: 6, color: '#374151', fontSize: 13, fontWeight: 600 }}>
-                Media files
-                <input type="file" name="mediaFiles" accept="image/*,video/*" multiple style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #d1d5db', background: '#fff' }} />
-              </label>
-            </div>
+            <input name="image" placeholder="Cover image URL" defaultValue="https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=1200&q=85" style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #d1d5db' }} />
+            <AdminMediaFields />
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               <textarea name="galleryImages" placeholder="Image URLs (one per line or comma separated)" rows={3} style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #d1d5db' }} />
               <textarea name="galleryVideos" placeholder="Video URLs (one per line or comma separated)" rows={3} style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #d1d5db' }} />
@@ -157,21 +149,18 @@ export default async function AdminPage() {
                     <input name="durationEn" defaultValue={trip.duration.en} style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid #d1d5db' }} />
                     <input name="durationAr" defaultValue={trip.duration.ar} style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid #d1d5db' }} />
                   </div>
-                  <input name="slug" defaultValue={trip.slug} style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid #d1d5db' }} />
+                  <select name="category" defaultValue={trip.category} style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid #d1d5db' }}>
+                    <option value="umrah">Umrah</option>
+                    <option value="honeymoon">Honeymoon</option>
+                    <option value="international">International</option>
+                    <option value="domestic">Domestic</option>
+                  </select>
+                  <input name="slug" defaultValue={trip.slug} readOnly aria-label="Trip slug (cannot be changed after creation)" style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid #d1d5db', background: '#f9fafb' }} />
                   <input name="image" defaultValue={trip.image} style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid #d1d5db' }} />
+                  <AdminMediaFields />
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-                    <label style={{ display: 'grid', gap: 6, fontSize: 12, color: '#4b5563', fontWeight: 600 }}>
-                      Cover file
-                      <input type="file" name="coverFile" accept="image/*" style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff' }} />
-                    </label>
-                    <label style={{ display: 'grid', gap: 6, fontSize: 12, color: '#4b5563', fontWeight: 600 }}>
-                      Media files
-                      <input type="file" name="mediaFiles" accept="image/*,video/*" multiple style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff' }} />
-                    </label>
-                  </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-                    <textarea name="galleryImages" placeholder="Image URLs" rows={2} style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid #d1d5db' }} />
-                    <textarea name="galleryVideos" placeholder="Video URLs" rows={2} style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid #d1d5db' }} />
+                    <textarea name="galleryImages" placeholder="Image URLs (one per line)" defaultValue={(trip.media ?? []).filter((item) => item.type === 'image' && !item.isPrimary).map((item) => item.url).join('\n')} rows={2} style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid #d1d5db' }} />
+                    <textarea name="galleryVideos" placeholder="Video URLs (one per line)" defaultValue={(trip.media ?? []).filter((item) => item.type === 'video').map((item) => item.url).join('\n')} rows={2} style={{ padding: '8px 10px', borderRadius: 8, border: '1px solid #d1d5db' }} />
                   </div>
                   <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', flexWrap: 'wrap' }}>
                     <button type="submit" style={{ background: '#111827', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 12px', cursor: 'pointer' }}>Update</button>
@@ -229,7 +218,7 @@ export default async function AdminPage() {
         </ul>
 
         <div style={{ marginTop: 20, background: '#fef3c7', border: '1px solid #facc15', borderRadius: 12, padding: 14, color: '#78350f' }}>
-          Set <code>ADMIN_EMAIL</code> and <code>NEON_AUTH_COOKIE_SECRET</code> in the deployment environment to enable live admin access in production.
+          Set <code>ADMIN_EMAIL</code>, <code>ADMIN_PASSWORD</code>, and <code>NEON_AUTH_COOKIE_SECRET</code> in the deployment environment to enable admin access in production.
         </div>
       </aside>
     </main>

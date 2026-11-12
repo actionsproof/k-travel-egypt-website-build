@@ -2,7 +2,7 @@ import { promises as fs } from 'node:fs'
 import path from 'node:path'
 import { asc, eq, inArray } from 'drizzle-orm'
 import { db, isDatabaseConfigured } from '@/lib/db'
-import { travelInquiries, travelTripMedia, travelTrips } from '@/lib/db/schema'
+import { travelHotels, travelInquiries, travelTripMedia, travelTrips } from '@/lib/db/schema'
 import { trips as fallbackTrips, type TravelTrip } from '@/lib/travel-data'
 
 export type AdminInquiryStatus = 'new' | 'contacted' | 'closed'
@@ -28,6 +28,12 @@ export type AdminStore = {
 }
 
 const storePath = path.join(process.cwd(), 'data', 'admin-store.json')
+
+function requirePersistentStorage(): void {
+  if (process.env.NODE_ENV === 'production' && !isDatabaseConfigured) {
+    throw new Error('DATABASE_URL must be configured before production admin data can be changed.')
+  }
+}
 
 function createDefaultStore(): AdminStore {
   return { trips: [], inquiries: [] }
@@ -110,7 +116,7 @@ export async function getManagedTrips(): Promise<TravelTrip[]> {
         category: row.category as TravelTrip['category'],
         image: row.imageUrls[0] ?? '',
         media: mediaByTrip.get(row.slug) ?? [],
-        hotels: Array.isArray((row.content as any).hotels) ? (row.content as any).hotels : [],
+        hotels: [],
       } as TravelTrip))
     } catch (error) {
       console.error('[admin-data] Could not read trips from database; falling back to local store.', error)
@@ -126,40 +132,44 @@ export async function getManagedTrips(): Promise<TravelTrip[]> {
 }
 
 export async function upsertAdminTrip(trip: TravelTrip): Promise<TravelTrip> {
+  requirePersistentStorage()
+
   if (isDatabaseConfigured) {
     const payload = toDbTripPayload(trip)
-    await db.insert(travelTrips)
-      .values({
-        slug: payload.slug,
-        category: payload.category,
-        content: payload.content,
-        imageUrls: payload.imageUrls,
-        sortOrder: 0,
-        isFeatured: false,
-        isPublished: true,
-      })
-      .onConflictDoUpdate({
-        target: travelTrips.slug,
-        set: {
+    await db.transaction(async (transaction) => {
+      await transaction.insert(travelTrips)
+        .values({
+          slug: payload.slug,
           category: payload.category,
           content: payload.content,
           imageUrls: payload.imageUrls,
-          updatedAt: new Date(),
-        },
-      })
+          sortOrder: 0,
+          isFeatured: false,
+          isPublished: true,
+        })
+        .onConflictDoUpdate({
+          target: travelTrips.slug,
+          set: {
+            category: payload.category,
+            content: payload.content,
+            imageUrls: payload.imageUrls,
+            updatedAt: new Date(),
+          },
+        })
 
-    await db.delete(travelTripMedia).where(eq(travelTripMedia.tripSlug, payload.slug))
-    if (payload.media.length) {
-      await db.insert(travelTripMedia).values(payload.media.map((media, index) => ({
-        tripSlug: payload.slug,
-        type: media.type,
-        url: media.url,
-        thumbnailUrl: media.thumbnail ?? null,
-        altText: media.alt ?? '',
-        isPrimary: Boolean(media.isPrimary || index === 0),
-        sortOrder: index,
-      })))
-    }
+      await transaction.delete(travelTripMedia).where(eq(travelTripMedia.tripSlug, payload.slug))
+      if (payload.media.length) {
+        await transaction.insert(travelTripMedia).values(payload.media.map((media, index) => ({
+          tripSlug: payload.slug,
+          type: media.type,
+          url: media.url,
+          thumbnailUrl: media.thumbnail ?? null,
+          altText: media.alt ?? '',
+          isPrimary: Boolean(media.isPrimary || index === 0),
+          sortOrder: index,
+        })))
+      }
+    })
     return trip
   }
 
@@ -172,9 +182,14 @@ export async function upsertAdminTrip(trip: TravelTrip): Promise<TravelTrip> {
 }
 
 export async function deleteAdminTrip(slug: string): Promise<void> {
+  requirePersistentStorage()
+
   if (isDatabaseConfigured) {
-    await db.delete(travelTripMedia).where(eq(travelTripMedia.tripSlug, slug))
-    await db.delete(travelTrips).where(eq(travelTrips.slug, slug))
+    await db.transaction(async (transaction) => {
+      await transaction.delete(travelTripMedia).where(eq(travelTripMedia.tripSlug, slug))
+      await transaction.delete(travelHotels).where(eq(travelHotels.tripSlug, slug))
+      await transaction.delete(travelTrips).where(eq(travelTrips.slug, slug))
+    })
     return
   }
 
@@ -184,6 +199,8 @@ export async function deleteAdminTrip(slug: string): Promise<void> {
 }
 
 export async function appendInquiry(inquiry: AdminInquiry): Promise<AdminInquiry> {
+  requirePersistentStorage()
+
   if (isDatabaseConfigured) {
     const [row]: Array<{ id: string }> = await db.insert(travelInquiries).values({
       name: inquiry.name,
@@ -230,6 +247,8 @@ export async function listInquiries(): Promise<AdminInquiry[]> {
 }
 
 export async function updateInquiryStatus(id: string, status: AdminInquiryStatus): Promise<AdminInquiry | null> {
+  requirePersistentStorage()
+
   if (isDatabaseConfigured) {
     const [row]: Array<{ id: string; name: string; phone: string; tripSlug: string; hotel: string; adults: number | string; children: number | string; preferredDate: string; notes: string; locale: string; status: string; createdAt?: Date | string | null }> = await db.update(travelInquiries)
       .set({ status })
